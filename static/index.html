@@ -1968,13 +1968,8 @@ async function loadData(silent = false) {
        AUTO REFRESH
        ======================================================== */
 
-    setInterval(() => {
-    if (
-        todayDate &&
-        isSameDate(selectedDate, todayDate)
-    ) {
-        loadData(true);
-    }
+setInterval(() => {
+    loadData(true);
 }, 10000);
 
 
