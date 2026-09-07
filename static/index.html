@@ -809,15 +809,12 @@
 
 
 <script>
-
     /* ========================================================
        STATE
        ======================================================== */
 
     let currentRange = "day";
-
-    let selectedDate =
-        new Date();
+    let selectedDate = new Date();
 
     let firstTrackedDate = null;
     let todayDate = null;
@@ -828,59 +825,37 @@
        ======================================================== */
 
     const datePicker =
-        document.getElementById(
-            "datePicker"
-        );
+        document.getElementById("datePicker");
 
     const previousButton =
-        document.getElementById(
-            "previousButton"
-        );
+        document.getElementById("previousButton");
 
     const nextButton =
-        document.getElementById(
-            "nextButton"
-        );
+        document.getElementById("nextButton");
 
     const totalElement =
-        document.getElementById(
-            "total"
-        );
+        document.getElementById("total");
 
     const totalSubtitle =
-        document.getElementById(
-            "totalSubtitle"
-        );
+        document.getElementById("totalSubtitle");
 
     const appsSummary =
-        document.getElementById(
-            "appsSummary"
-        );
+        document.getElementById("appsSummary");
 
     const appsList =
-        document.getElementById(
-            "appsList"
-        );
+        document.getElementById("appsList");
 
     const graph =
-        document.getElementById(
-            "graph"
-        );
+        document.getElementById("graph");
 
     const graphTitle =
-        document.getElementById(
-            "graphTitle"
-        );
+        document.getElementById("graphTitle");
 
     const graphMeta =
-        document.getElementById(
-            "graphMeta"
-        );
+        document.getElementById("graphMeta");
 
     const statusElement =
-        document.getElementById(
-            "status"
-        );
+        document.getElementById("status");
 
 
     /* ========================================================
@@ -888,8 +863,7 @@
        ======================================================== */
 
     function pad(number) {
-        return String(number)
-            .padStart(2, "0");
+        return String(number).padStart(2, "0");
     }
 
 
@@ -905,13 +879,25 @@
 
 
     function parseLocalDate(value) {
-        const parts =
-            value.split("-");
+        const parts = value.split("-");
 
         return new Date(
             Number(parts[0]),
             Number(parts[1]) - 1,
             Number(parts[2])
+        );
+    }
+
+
+    function isSameDate(a, b) {
+        if (!a || !b) {
+            return false;
+        }
+
+        return (
+            a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate()
         );
     }
 
@@ -1101,9 +1087,7 @@
         try {
 
             const response =
-                await fetch(
-                    "/api/meta"
-                );
+                await fetch("/api/meta");
 
             if (!response.ok) {
                 throw new Error(
@@ -1130,6 +1114,7 @@
             datePicker.max =
                 data.today;
 
+
             if (
                 selectedDate <
                 firstTrackedDate
@@ -1140,6 +1125,7 @@
                     );
             }
 
+
             if (
                 selectedDate >
                 todayDate
@@ -1149,6 +1135,7 @@
                         todayDate
                     );
             }
+
 
             datePicker.value =
                 toDateInputValue(
@@ -1182,6 +1169,7 @@
             !firstTrackedDate ||
             !todayDate
         ) {
+
             previousButton.disabled =
                 false;
 
@@ -1190,6 +1178,7 @@
 
             return;
         }
+
 
         previousButton.disabled =
             selectedDate <=
@@ -1209,6 +1198,7 @@
                 amount
             );
 
+
         if (
             firstTrackedDate &&
             newDate < firstTrackedDate
@@ -1219,6 +1209,7 @@
                 );
         }
 
+
         if (
             todayDate &&
             newDate > todayDate
@@ -1228,6 +1219,7 @@
                     todayDate
                 );
         }
+
 
         selectedDate =
             newDate;
@@ -1263,15 +1255,16 @@
                 return;
             }
 
+
             selectedDate =
                 parseLocalDate(
                     datePicker.value
                 );
 
+
             if (
                 firstTrackedDate &&
-                selectedDate <
-                firstTrackedDate
+                selectedDate < firstTrackedDate
             ) {
                 selectedDate =
                     new Date(
@@ -1279,16 +1272,17 @@
                     );
             }
 
+
             if (
                 todayDate &&
-                selectedDate >
-                todayDate
+                selectedDate > todayDate
             ) {
                 selectedDate =
                     new Date(
                         todayDate
                     );
             }
+
 
             datePicker.value =
                 toDateInputValue(
@@ -1307,9 +1301,7 @@
        ======================================================== */
 
     document
-        .querySelectorAll(
-            ".range-button"
-        )
+        .querySelectorAll(".range-button")
         .forEach(button => {
 
             button.addEventListener(
@@ -1321,14 +1313,17 @@
                             ".range-button"
                         )
                         .forEach(item => {
+
                             item.classList.remove(
                                 "active"
                             );
                         });
 
+
                     button.classList.add(
                         "active"
                     );
+
 
                     currentRange =
                         button.dataset.range;
@@ -1345,17 +1340,24 @@
 
     function renderAggregatedGraph(items) {
 
+        const previousScrollLeft =
+            graph.scrollLeft;
+
+
         graph.innerHTML = "";
+
 
         if (
             !items ||
             items.length === 0
         ) {
+
             graph.innerHTML =
                 '<div class="empty">No tracked time in this period.</div>';
 
             return;
         }
+
 
         const values =
             items.map(
@@ -1365,11 +1367,29 @@
                     )
             );
 
+
         const max =
             Math.max(
                 ...values,
                 1
             );
+
+
+        const now =
+            new Date();
+
+
+        const viewingToday =
+            currentRange === "day" &&
+            isSameDate(
+                selectedDate,
+                todayDate
+            );
+
+
+        const currentHour =
+            now.getHours();
+
 
         items.forEach(item => {
 
@@ -1377,6 +1397,7 @@
                 Number(
                     item.seconds || 0
                 );
+
 
             const wrapper =
                 document.createElement(
@@ -1386,6 +1407,7 @@
             wrapper.className =
                 "bar-wrapper";
 
+
             const area =
                 document.createElement(
                     "div"
@@ -1394,6 +1416,7 @@
             area.className =
                 "bar-area";
 
+
             const bar =
                 document.createElement(
                     "div"
@@ -1401,6 +1424,7 @@
 
             bar.className =
                 "bar";
+
 
             const height =
                 seconds > 0
@@ -1413,11 +1437,93 @@
                     )
                     : 2;
 
+
             bar.style.height =
                 `${height}px`;
 
+
             bar.title =
                 `${item.label}: ${formatSeconds(seconds)}`;
+
+
+            /*
+             * Highlight the current hour
+             * when viewing today's Day view.
+             */
+
+            if (
+                viewingToday &&
+                item.label ===
+                    `${pad(currentHour)}:00`
+            ) {
+
+                bar.style.boxShadow =
+                    "0 0 0 2px #ffffff";
+
+                bar.title +=
+                    " — current hour";
+            }
+
+
+            /*
+             * Show duration inside bars
+             * that are large enough.
+             */
+
+            if (
+                height >= 42 &&
+                seconds >= 60
+            ) {
+
+                const duration =
+                    document.createElement(
+                        "div"
+                    );
+
+                duration.textContent =
+                    formatSeconds(seconds);
+
+
+                duration.style.position =
+                    "absolute";
+
+                duration.style.left =
+                    "50%";
+
+                duration.style.bottom =
+                    "7px";
+
+                duration.style.transform =
+                    "translateX(-50%)";
+
+                duration.style.color =
+                    "#17191d";
+
+                duration.style.fontSize =
+                    "9px";
+
+                duration.style.fontWeight =
+                    "600";
+
+                duration.style.lineHeight =
+                    "1";
+
+                duration.style.whiteSpace =
+                    "nowrap";
+
+                duration.style.pointerEvents =
+                    "none";
+
+
+                bar.style.position =
+                    "relative";
+
+
+                bar.appendChild(
+                    duration
+                );
+            }
+
 
             const label =
                 document.createElement(
@@ -1430,12 +1536,35 @@
             label.textContent =
                 item.label;
 
-            area.appendChild(bar);
 
-            wrapper.appendChild(area);
-            wrapper.appendChild(label);
+            area.appendChild(
+                bar
+            );
 
-            graph.appendChild(wrapper);
+            wrapper.appendChild(
+                area
+            );
+
+            wrapper.appendChild(
+                label
+            );
+
+            graph.appendChild(
+                wrapper
+            );
+        });
+
+
+        /*
+         * Keep the graph horizontally
+         * where the user left it during
+         * automatic refresh.
+         */
+
+        requestAnimationFrame(() => {
+
+            graph.scrollLeft =
+                previousScrollLeft;
         });
     }
 
@@ -1444,11 +1573,14 @@
 
         const items =
             hourly.map(item => ({
+
                 label:
                     `${pad(item.hour)}:00`,
+
                 seconds:
                     item.seconds
             }));
+
 
         renderAggregatedGraph(
             items
@@ -1466,12 +1598,15 @@
                         item.date
                     );
 
+
                 let label;
+
 
                 if (
                     currentRange ===
                     "week"
                 ) {
+
                     label =
                         date.toLocaleDateString(
                             undefined,
@@ -1480,12 +1615,15 @@
                                     "short"
                             }
                         );
+
                 } else {
+
                     label =
                         String(
                             date.getDate()
                         );
                 }
+
 
                 return {
                     label,
@@ -1493,6 +1631,7 @@
                         item.seconds
                 };
             });
+
 
         renderAggregatedGraph(
             items
@@ -1508,7 +1647,8 @@
         ) {
 
             graphTitle.textContent =
-                `${getRangeTitle()} â€” weekly usage`;
+                `${getRangeTitle()} — weekly usage`;
+
 
             const graphData =
                 data.weekly.map(
@@ -1519,17 +1659,20 @@
                                 item.end
                             );
 
+
                         return {
+
                             label:
                                 `${formatShortDate(
                                     item.start
-                                )}â€“${endDate.getDate()}`,
+                                )}–${endDate.getDate()}`,
 
                             seconds:
                                 item.seconds
                         };
                     }
                 );
+
 
             renderAggregatedGraph(
                 graphData
@@ -1538,12 +1681,15 @@
             return;
         }
 
+
         graphTitle.textContent =
-            `${getRangeTitle()} â€” monthly usage`;
+            `${getRangeTitle()} — monthly usage`;
+
 
         const graphData =
             data.monthly.map(
                 item => ({
+
                     label:
                         formatMonth(
                             item.start
@@ -1553,6 +1699,7 @@
                         item.seconds
                 })
             );
+
 
         renderAggregatedGraph(
             graphData
@@ -1568,6 +1715,7 @@
 
         appsSummary.innerHTML = "";
         appsList.innerHTML = "";
+
 
         if (
             !apps ||
@@ -1585,7 +1733,7 @@
 
 
         /*
-         * Summary: top five apps
+         * Top five apps.
          */
 
         apps
@@ -1597,8 +1745,10 @@
                         "div"
                     );
 
+
                 row.className =
                     "app-row";
+
 
                 row.innerHTML = `
                     <div class="app-name">
@@ -1610,6 +1760,7 @@
                     </div>
                 `;
 
+
                 appsSummary.appendChild(
                     row
                 );
@@ -1617,7 +1768,7 @@
 
 
         /*
-         * Full app list
+         * Full app list.
          */
 
         apps.forEach(app => {
@@ -1627,8 +1778,10 @@
                     "div"
                 );
 
+
             row.className =
                 "app-detail";
+
 
             row.innerHTML = `
                 <div>
@@ -1646,6 +1799,7 @@
                 </div>
             `;
 
+
             appsList.appendChild(
                 row
             );
@@ -1657,36 +1811,41 @@
        DATA LOADING
        ======================================================== */
 
-async function loadData(silent = false) {
+    async function loadData(silent = false) {
 
-    if (!silent) {
-        totalElement.textContent =
-            "â€¦";
+        if (!silent) {
 
-        totalSubtitle.textContent =
-            "Loading...";
+            totalElement.textContent =
+                "…";
 
-        graph.innerHTML =
-            '<div class="loading">Loading...</div>';
+            totalSubtitle.textContent =
+                "Loading...";
 
-        appsSummary.innerHTML =
-            '<div class="loading">Loading...</div>';
 
-        appsList.innerHTML =
-            '<div class="loading">Loading...</div>';
-    }
+            graph.innerHTML =
+                '<div class="loading">Loading...</div>';
 
-    const selected =
-        toDateInputValue(
-            selectedDate
-        );
+
+            appsSummary.innerHTML =
+                '<div class="loading">Loading...</div>';
+
+
+            appsList.innerHTML =
+                '<div class="loading">Loading...</div>';
+        }
+
+
+        const selected =
+            toDateInputValue(
+                selectedDate
+            );
 
 
         try {
 
-            /*
-             * DAY
-             */
+            /* ==================================================
+               DAY
+               ================================================== */
 
             if (
                 currentRange === "day"
@@ -1697,47 +1856,58 @@ async function loadData(silent = false) {
                         `/api/day?date_string=${selected}`
                     );
 
+
                 if (!response.ok) {
+
                     throw new Error(
                         "Day request failed."
                     );
                 }
 
+
                 const data =
                     await response.json();
+
 
                 totalElement.textContent =
                     formatSeconds(
                         data.total_seconds
                     );
 
+
                 graphTitle.textContent =
-                    `${formatDate(selected)} â€” hourly usage`;
+                    `${formatDate(selected)} — hourly usage`;
+
 
                 graphMeta.textContent =
                     "24 hours";
+
 
                 renderDayGraph(
                     data.hourly || []
                 );
 
+
                 renderApps(
                     data.apps || []
                 );
 
+
                 totalSubtitle.textContent =
                     formatDate(selected);
 
+
                 statusElement.textContent =
                     `Showing ${formatDate(selected)}`;
+
 
                 return;
             }
 
 
-            /*
-             * WEEK
-             */
+            /* ==================================================
+               WEEK
+               ================================================== */
 
             if (
                 currentRange === "week"
@@ -1748,47 +1918,58 @@ async function loadData(silent = false) {
                         `/api/week?date_string=${selected}`
                     );
 
+
                 if (!response.ok) {
+
                     throw new Error(
                         "Week request failed."
                     );
                 }
 
+
                 const data =
                     await response.json();
+
 
                 totalElement.textContent =
                     formatSeconds(
                         data.total_seconds
                     );
 
+
                 graphTitle.textContent =
-                    `${formatShortDate(data.start)} â€“ ${formatDate(data.end)} â€” daily usage`;
+                    `${formatShortDate(data.start)} – ${formatDate(data.end)} — daily usage`;
+
 
                 graphMeta.textContent =
                     "7 days";
+
 
                 renderDailyGraph(
                     data.daily || []
                 );
 
+
                 renderApps(
                     data.apps || []
                 );
 
+
                 totalSubtitle.textContent =
-                    `${formatDate(data.start)} â€“ ${formatDate(data.end)}`;
+                    `${formatDate(data.start)} – ${formatDate(data.end)}`;
+
 
                 statusElement.textContent =
-                    `Showing ${formatDate(data.start)} â€“ ${formatDate(data.end)}`;
+                    `Showing ${formatDate(data.start)} – ${formatDate(data.end)}`;
+
 
                 return;
             }
 
 
-            /*
-             * MONTH
-             */
+            /* ==================================================
+               MONTH
+               ================================================== */
 
             if (
                 currentRange === "month"
@@ -1799,50 +1980,62 @@ async function loadData(silent = false) {
                         `/api/month?date_string=${selected}`
                     );
 
+
                 if (!response.ok) {
+
                     throw new Error(
                         "Month request failed."
                     );
                 }
 
+
                 const data =
                     await response.json();
+
 
                 totalElement.textContent =
                     formatSeconds(
                         data.total_seconds
                     );
 
+
                 graphTitle.textContent =
-                    `${formatMonth(data.start)} â€” daily usage`;
+                    `${formatMonth(data.start)} — daily usage`;
+
 
                 graphMeta.textContent =
                     "Daily breakdown";
+
 
                 renderDailyGraph(
                     data.daily || []
                 );
 
+
                 renderApps(
                     data.apps || []
                 );
 
+
                 totalSubtitle.textContent =
-                    `${formatDate(data.start)} â€“ ${formatDate(data.end)}`;
+                    `${formatDate(data.start)} – ${formatDate(data.end)}`;
+
 
                 statusElement.textContent =
-                    `Showing ${formatDate(data.start)} â€“ ${formatDate(data.end)}`;
+                    `Showing ${formatDate(data.start)} – ${formatDate(data.end)}`;
+
 
                 return;
             }
 
 
-            /*
-             * LONG RANGE
-             */
+            /* ==================================================
+               LONG RANGE
+               ================================================== */
 
             let start;
             let end;
+
 
             if (
                 currentRange === "3m"
@@ -1852,6 +2045,7 @@ async function loadData(silent = false) {
                     new Date(
                         selectedDate
                     );
+
 
                 start.setMonth(
                     start.getMonth() - 3
@@ -1866,6 +2060,7 @@ async function loadData(silent = false) {
                         selectedDate
                     );
 
+
                 start.setMonth(
                     start.getMonth() - 6
                 );
@@ -1876,6 +2071,7 @@ async function loadData(silent = false) {
                     new Date(
                         selectedDate
                     );
+
 
                 start.setFullYear(
                     start.getFullYear() - 1
@@ -1892,6 +2088,7 @@ async function loadData(silent = false) {
                 firstTrackedDate &&
                 start < firstTrackedDate
             ) {
+
                 start =
                     new Date(
                         firstTrackedDate
@@ -1910,11 +2107,14 @@ async function loadData(silent = false) {
                     `/api/history?start=${toDateInputValue(start)}&end=${toDateInputValue(end)}`
                 );
 
+
             if (!response.ok) {
+
                 throw new Error(
                     "History request failed."
                 );
             }
+
 
             const data =
                 await response.json();
@@ -1925,38 +2125,49 @@ async function loadData(silent = false) {
                     data.total_seconds
                 );
 
+
             renderLongRangeGraph(
                 data
             );
+
 
             renderApps(
                 data.apps || []
             );
 
+
             totalSubtitle.textContent =
-                `${formatDate(start)} â€“ ${formatDate(end)}`;
+                `${formatDate(start)} – ${formatDate(end)}`;
+
 
             statusElement.textContent =
-                `Showing ${formatDate(start)} â€“ ${formatDate(end)}`;
+                `Showing ${formatDate(start)} – ${formatDate(end)}`;
+
 
         } catch (error) {
 
             console.error(error);
 
+
             totalElement.textContent =
-                "â€”";
+                "—";
+
 
             totalSubtitle.textContent =
                 "Could not load data.";
 
+
             graph.innerHTML =
                 '<div class="empty">Could not load usage data.</div>';
+
 
             appsSummary.innerHTML =
                 '<div class="empty">Could not load applications.</div>';
 
+
             appsList.innerHTML =
                 '<div class="empty">Could not load application data.</div>';
+
 
             statusElement.textContent =
                 "Something went wrong while loading the dashboard.";
@@ -1968,9 +2179,11 @@ async function loadData(silent = false) {
        AUTO REFRESH
        ======================================================== */
 
-setInterval(() => {
-    loadData(true);
-}, 10000);
+    setInterval(() => {
+
+        loadData(true);
+
+    }, 10000);
 
 
     /* ========================================================
@@ -1983,6 +2196,7 @@ setInterval(() => {
             toDateInputValue(
                 selectedDate
             );
+
 
         await loadMeta();
 
