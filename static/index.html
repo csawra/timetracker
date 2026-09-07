@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -429,21 +429,35 @@
         }
 
         .bar {
-            width: min(32px, 72%);
+    width: min(32px, 72%);
+    min-height: 2px;
+    background: #d9dde3;
+    border-radius: 5px 5px 2px 2px;
+    position: relative;
 
-            min-height: 2px;
+    transition:
+        height 0.25s ease,
+        opacity 0.15s ease,
+        transform 0.15s ease;
+}
 
-            background: #d9dde3;
+.bar:hover {
+    opacity: 0.82;
+    transform: translateY(-2px);
+}
+        .bar-duration {
+            position: absolute;
+            left: 50%;
+            bottom: 6px;
+            transform: translateX(-50%);
 
-            border-radius: 5px 5px 2px 2px;
+            white-space: nowrap;
 
-            transition:
-                height 0.25s ease,
-                opacity 0.15s ease;
-        }
+            font-size: 10px;
+            font-weight: 600;
 
-        .bar:hover {
-            opacity: 0.72;
+            color: #111419;
+            pointer-events: none;
         }
 
         .bar-label {
@@ -668,7 +682,7 @@
                     class="date-button"
                     title="Previous"
                 >
-                    ‹
+                    â€¹
                 </button>
 
                 <input
@@ -681,7 +695,7 @@
                     class="date-button"
                     title="Next"
                 >
-                    ›
+                    â€º
                 </button>
 
             </div>
@@ -705,7 +719,7 @@
                     id="total"
                     class="total"
                 >
-                    —
+                    â€”
                 </div>
 
                 <div
@@ -1494,7 +1508,7 @@
         ) {
 
             graphTitle.textContent =
-                `${getRangeTitle()} — weekly usage`;
+                `${getRangeTitle()} â€” weekly usage`;
 
             const graphData =
                 data.weekly.map(
@@ -1509,7 +1523,7 @@
                             label:
                                 `${formatShortDate(
                                     item.start
-                                )}–${endDate.getDate()}`,
+                                )}â€“${endDate.getDate()}`,
 
                             seconds:
                                 item.seconds
@@ -1525,7 +1539,7 @@
         }
 
         graphTitle.textContent =
-            `${getRangeTitle()} — monthly usage`;
+            `${getRangeTitle()} â€” monthly usage`;
 
         const graphData =
             data.monthly.map(
@@ -1647,7 +1661,7 @@ async function loadData(silent = false) {
 
     if (!silent) {
         totalElement.textContent =
-            "…";
+            "â€¦";
 
         totalSubtitle.textContent =
             "Loading...";
@@ -1698,7 +1712,7 @@ async function loadData(silent = false) {
                     );
 
                 graphTitle.textContent =
-                    `${formatDate(selected)} — hourly usage`;
+                    `${formatDate(selected)} â€” hourly usage`;
 
                 graphMeta.textContent =
                     "24 hours";
@@ -1749,7 +1763,7 @@ async function loadData(silent = false) {
                     );
 
                 graphTitle.textContent =
-                    `${formatShortDate(data.start)} – ${formatDate(data.end)} — daily usage`;
+                    `${formatShortDate(data.start)} â€“ ${formatDate(data.end)} â€” daily usage`;
 
                 graphMeta.textContent =
                     "7 days";
@@ -1763,10 +1777,10 @@ async function loadData(silent = false) {
                 );
 
                 totalSubtitle.textContent =
-                    `${formatDate(data.start)} – ${formatDate(data.end)}`;
+                    `${formatDate(data.start)} â€“ ${formatDate(data.end)}`;
 
                 statusElement.textContent =
-                    `Showing ${formatDate(data.start)} – ${formatDate(data.end)}`;
+                    `Showing ${formatDate(data.start)} â€“ ${formatDate(data.end)}`;
 
                 return;
             }
@@ -1800,7 +1814,7 @@ async function loadData(silent = false) {
                     );
 
                 graphTitle.textContent =
-                    `${formatMonth(data.start)} — daily usage`;
+                    `${formatMonth(data.start)} â€” daily usage`;
 
                 graphMeta.textContent =
                     "Daily breakdown";
@@ -1814,10 +1828,10 @@ async function loadData(silent = false) {
                 );
 
                 totalSubtitle.textContent =
-                    `${formatDate(data.start)} – ${formatDate(data.end)}`;
+                    `${formatDate(data.start)} â€“ ${formatDate(data.end)}`;
 
                 statusElement.textContent =
-                    `Showing ${formatDate(data.start)} – ${formatDate(data.end)}`;
+                    `Showing ${formatDate(data.start)} â€“ ${formatDate(data.end)}`;
 
                 return;
             }
@@ -1920,17 +1934,17 @@ async function loadData(silent = false) {
             );
 
             totalSubtitle.textContent =
-                `${formatDate(start)} – ${formatDate(end)}`;
+                `${formatDate(start)} â€“ ${formatDate(end)}`;
 
             statusElement.textContent =
-                `Showing ${formatDate(start)} – ${formatDate(end)}`;
+                `Showing ${formatDate(start)} â€“ ${formatDate(end)}`;
 
         } catch (error) {
 
             console.error(error);
 
             totalElement.textContent =
-                "—";
+                "â€”";
 
             totalSubtitle.textContent =
                 "Could not load data.";
