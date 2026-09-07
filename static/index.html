@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="color-scheme"
+        content="dark"
+    >
+
+    <title>TimeTracker</title>
+
+    <style>
+        :root {
+            color-scheme: dark;
+
+            --bg: #0b0d10;
+            --panel: #111419;
+            --panel-hover: #15181e;
+            --border: #22262d;
+            --border-light: #2a2f37;
+
+            --text: #f1f3f5;
+            --muted: #858b96;
+            --muted-dark: #626873;
+
+            --accent: #f1f3f5;
+            --accent-dark: #b8bdc6;
+
+            --danger: #777d87;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            color-scheme: dark;
+            background: var(--bg);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at top,
+                    #15181d 0,
+                    var(--bg) 42%
+                );
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            color: inherit;
+        }
+
+        .container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 42px 0 60px;
+        }
+
+        /* =====================================================
+           HEADER
+           ===================================================== */
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+
+            margin-bottom: 28px;
+        }
+
+        .title-area h1 {
+            margin: 0;
+
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+        }
+
+        .title-area p {
+            margin: 7px 0 0;
+
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           CONTROLS
+           ===================================================== */
+
+        .controls {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .range-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+
+            padding: 4px;
+
+            background: #0f1115;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .range-button {
+            border: 0;
+            background: transparent;
+
+            color: var(--muted);
+
+            padding: 7px 11px;
+            border-radius: 7px;
+
+            font-size: 12px;
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                color 0.15s ease;
+        }
+
+        .range-button:hover {
+            background: #191c21;
+            color: var(--text);
+        }
+
+        .range-button.active {
+            background: #252a31;
+            color: var(--text);
+        }
+
+        /* =====================================================
+           DATE PICKER
+           ===================================================== */
+
+        .date-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .date-button {
+            width: 34px;
+            height: 34px;
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            background: var(--panel);
+
+            color: var(--muted);
+
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                color 0.15s ease,
+                border-color 0.15s ease;
+        }
+
+        .date-button:hover:not(:disabled) {
+            background: var(--panel-hover);
+            color: var(--text);
+            border-color: var(--border-light);
+        }
+
+        .date-button:disabled {
+            opacity: 0.28;
+            cursor: default;
+        }
+
+        input[type="date"] {
+            height: 34px;
+
+            padding: 0 10px;
+
+            background: #111419;
+            color: #f1f3f5;
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            outline: none;
+
+            color-scheme: dark;
+
+            cursor: pointer;
+        }
+
+        input[type="date"]:hover {
+            border-color: var(--border-light);
+        }
+
+        input[type="date"]:focus {
+            border-color: #3a4049;
+        }
+
+        /*
+         * Chrome / Edge calendar icon.
+         * The popup itself follows color-scheme: dark.
+         */
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8);
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* =====================================================
+           GRID
+           ===================================================== */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+
+            margin-bottom: 14px;
+        }
+
+        .card {
+            background: rgba(17, 20, 25, 0.92);
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            padding: 20px;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.16);
+        }
+
+        .card-title {
+            margin: 0 0 12px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+            font-weight: 600;
+
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        .total {
+            font-size: 34px;
+            font-weight: 700;
+
+            letter-spacing: -1px;
+        }
+
+        .total-subtitle {
+            margin-top: 6px;
+
+            color: var(--muted-dark);
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           APPS SUMMARY
+           ===================================================== */
+
+        .apps-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .app-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+
+            padding: 8px 0;
+
+            border-bottom: 1px solid #1a1d22;
+        }
+
+        .app-row:last-child {
+            border-bottom: 0;
+        }
+
+        .app-name {
+            min-width: 0;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            font-size: 13px;
+        }
+
+        .app-time {
+            flex-shrink: 0;
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        .empty {
+            color: var(--muted-dark);
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           GRAPH
+           ===================================================== */
+
+        .graph-card {
+            margin-bottom: 14px;
+        }
+
+        .graph-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 14px;
+        }
+
+        .graph-title {
+            margin: 0;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .graph-meta {
+            color: var(--muted-dark);
+            font-size: 11px;
+        }
+
+        .graph {
+            height: 240px;
+
+            display: flex;
+            align-items: flex-end;
+
+            gap: 8px;
+
+            overflow-x: auto;
+            overflow-y: hidden;
+
+            padding: 10px 4px 4px;
+
+            scrollbar-width: thin;
+            scrollbar-color: #2a2f37 transparent;
+        }
+
+        .graph::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .graph::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .graph::-webkit-scrollbar-thumb {
+            background: #2a2f37;
+            border-radius: 999px;
+        }
+
+        .graph::-webkit-scrollbar-thumb:hover {
+            background: #3a404a;
+        }
+
+        .bar-wrapper {
+            flex: 0 0 42px;
+
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        @media (min-width: 700px) {
+            .bar-wrapper {
+                min-width: 55px;
+            }
+        }
+
+        .bar-area {
+            width: 100%;
+            height: 195px;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .bar {
+            width: min(32px, 72%);
+
+            min-height: 2px;
+
+            background: #d9dde3;
+
+            border-radius: 5px 5px 2px 2px;
+
+            transition:
+                height 0.25s ease,
+                opacity 0.15s ease;
+        }
+
+        .bar:hover {
+            opacity: 0.72;
+        }
+
+        .bar-label {
+            color: #737985;
+
+            font-size: 10px;
+
+            white-space: nowrap;
+
+            margin-top: 5px;
+
+            text-align: center;
+
+            transform: none;
+        }
+
+        /* =====================================================
+           APPS
+           ===================================================== */
+
+        .apps-card {
+            margin-bottom: 14px;
+        }
+
+        .apps-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-detail {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+
+            gap: 14px;
+
+            padding: 12px 0;
+
+            border-bottom: 1px solid #1b1e24;
+        }
+
+        .app-detail:last-child {
+            border-bottom: 0;
+        }
+
+        .app-detail-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .app-detail-process {
+            margin-top: 3px;
+
+            color: var(--muted-dark);
+            font-size: 10px;
+        }
+
+        .app-detail-time {
+            color: var(--muted);
+
+            font-size: 12px;
+            text-align: right;
+        }
+
+        /* =====================================================
+           STATUS
+           ===================================================== */
+
+        .status {
+            color: var(--muted-dark);
+
+            text-align: center;
+
+            font-size: 11px;
+
+            padding-top: 6px;
+        }
+
+        /* =====================================================
+           LOADING
+           ===================================================== */
+
+        .loading {
+            color: var(--muted);
+
+            font-size: 13px;
+
+            text-align: center;
+
+            padding: 40px 0;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (max-width: 760px) {
+            .container {
+                width: min(
+                    100% - 20px,
+                    1180px
+                );
+
+                padding-top: 24px;
+            }
+
+            header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                width: 100%;
+            }
+
+            .range-buttons {
+                width: 100%;
+            }
+
+            .range-button {
+                flex: 1;
+            }
+
+            .date-controls {
+                width: 100%;
+            }
+
+            input[type="date"] {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title-area h1 {
+                font-size: 28px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .total {
+                font-size: 30px;
+            }
+
+            .graph {
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+
+        <div class="title-area">
+            <h1>TimeTracker</h1>
+
+            <p>
+                Where your time actually went.
+            </p>
+        </div>
+
+        <div class="controls">
+
+            <div class="range-buttons">
+
+                <button
+                    class="range-button active"
+                    data-range="day"
+                >
+                    Day
+                </button>
+
+                <button
+                    class="range-button"
+                    data-range="week"
+                >
+                    Week
+                </button>
+
+                <button
+                    class="range-button"
+                    data-range="month"
+                >
+                    Month
+                </button>
+
+                <button
+                    class="range-button"
+                    data-range="3m"
+                >
+                    3 Months
+                </button>
+
+                <button
+                    class="range-button"
+                    data-range="6m"
+                >
+                    6 Months
+                </button>
+
+                <button
+                    class="range-button"
+                    data-range="year"
+                >
+                    Year
+                </button>
+
+            </div>
+
+            <div class="date-controls">
+
+                <button
+                    id="previousButton"
+                    class="date-button"
+                    title="Previous"
+                >
+                    ‹
+                </button>
+
+                <input
+                    id="datePicker"
+                    type="date"
+                >
+
+                <button
+                    id="nextButton"
+                    class="date-button"
+                    title="Next"
+                >
+                    ›
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <div class="summary-grid">
+
+            <section class="card">
+
+                <div class="card-title">
+                    Total tracked
+                </div>
+
+                <div
+                    id="total"
+                    class="total"
+                >
+                    —
+                </div>
+
+                <div
+                    id="totalSubtitle"
+                    class="total-subtitle"
+                >
+                    Loading...
+                </div>
+
+            </section>
+
+
+            <section class="card">
+
+                <div class="card-title">
+                    Applications
+                </div>
+
+                <div
+                    id="appsSummary"
+                    class="apps-summary"
+                >
+                    <div class="loading">
+                        Loading...
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <section class="card graph-card">
+
+            <div class="graph-header">
+
+                <h2
+                    id="graphTitle"
+                    class="graph-title"
+                >
+                    Usage
+                </h2>
+
+                <div
+                    id="graphMeta"
+                    class="graph-meta"
+                ></div>
+
+            </div>
+
+            <div
+                id="graph"
+                class="graph"
+            ></div>
+
+        </section>
+
+
+        <section class="card apps-card">
+
+            <div class="card-title">
+                Application usage
+            </div>
+
+            <div
+                id="appsList"
+                class="apps-list"
+            >
+                <div class="loading">
+                    Loading...
+                </div>
+            </div>
+
+        </section>
+
+
+        <div
+            id="status"
+            class="status"
+        >
+            Loading...
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /* ========================================================
+       STATE
+       ======================================================== */
+
+    let currentRange = "day";
+
+    let selectedDate =
+        new Date();
+
+    let firstTrackedDate = null;
+    let todayDate = null;
+
+
+    /* ========================================================
+       ELEMENTS
+       ======================================================== */
+
+    const datePicker =
+        document.getElementById(
+            "datePicker"
+        );
+
+    const previousButton =
+        document.getElementById(
+            "previousButton"
+        );
+
+    const nextButton =
+        document.getElementById(
+            "nextButton"
+        );
+
+    const totalElement =
+        document.getElementById(
+            "total"
+        );
+
+    const totalSubtitle =
+        document.getElementById(
+            "totalSubtitle"
+        );
+
+    const appsSummary =
+        document.getElementById(
+            "appsSummary"
+        );
+
+    const appsList =
+        document.getElementById(
+            "appsList"
+        );
+
+    const graph =
+        document.getElementById(
+            "graph"
+        );
+
+    const graphTitle =
+        document.getElementById(
+            "graphTitle"
+        );
+
+    const graphMeta =
+        document.getElementById(
+            "graphMeta"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "status"
+        );
+
+
+    /* ========================================================
+       DATE HELPERS
+       ======================================================== */
+
+    function pad(number) {
+        return String(number)
+            .padStart(2, "0");
+    }
+
+
+    function toDateInputValue(date) {
+        return (
+            date.getFullYear() +
+            "-" +
+            pad(date.getMonth() + 1) +
+            "-" +
+            pad(date.getDate())
+        );
+    }
+
+
+    function parseLocalDate(value) {
+        const parts =
+            value.split("-");
+
+        return new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+    }
+
+
+    function formatDate(value) {
+        const date =
+            typeof value === "string"
+                ? parseLocalDate(value)
+                : value;
+
+        return date.toLocaleDateString(
+            undefined,
+            {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+            }
+        );
+    }
+
+
+    function formatShortDate(value) {
+        const date =
+            typeof value === "string"
+                ? parseLocalDate(value)
+                : value;
+
+        return date.toLocaleDateString(
+            undefined,
+            {
+                month: "short",
+                day: "numeric"
+            }
+        );
+    }
+
+
+    function formatMonth(value) {
+        const date =
+            typeof value === "string"
+                ? parseLocalDate(value)
+                : value;
+
+        return date.toLocaleDateString(
+            undefined,
+            {
+                month: "short",
+                year: "numeric"
+            }
+        );
+    }
+
+
+    function addDays(date, amount) {
+        const result =
+            new Date(date);
+
+        result.setDate(
+            result.getDate() + amount
+        );
+
+        return result;
+    }
+
+
+    function getWeekStart(date) {
+        const result =
+            new Date(date);
+
+        const day =
+            result.getDay();
+
+        const difference =
+            day === 0
+                ? -6
+                : 1 - day;
+
+        result.setDate(
+            result.getDate() + difference
+        );
+
+        return result;
+    }
+
+
+    function getRangeTitle() {
+
+        if (currentRange === "day") {
+            return "Day";
+        }
+
+        if (currentRange === "week") {
+            return "Week";
+        }
+
+        if (currentRange === "month") {
+            return "Month";
+        }
+
+        if (currentRange === "3m") {
+            return "3 Months";
+        }
+
+        if (currentRange === "6m") {
+            return "6 Months";
+        }
+
+        return "Year";
+    }
+
+
+    /* ========================================================
+       TIME FORMAT
+       ======================================================== */
+
+    function formatSeconds(seconds) {
+
+        seconds =
+            Number(seconds || 0);
+
+        if (seconds < 60) {
+            return (
+                Math.round(seconds) +
+                "s"
+            );
+        }
+
+        const minutes =
+            Math.floor(
+                seconds / 60
+            );
+
+        const hours =
+            Math.floor(
+                minutes / 60
+            );
+
+        const remainingMinutes =
+            minutes % 60;
+
+        if (hours > 0) {
+
+            if (remainingMinutes === 0) {
+                return (
+                    hours +
+                    "h"
+                );
+            }
+
+            return (
+                hours +
+                "h " +
+                remainingMinutes +
+                "m"
+            );
+        }
+
+        return (
+            minutes +
+            "m"
+        );
+    }
+
+
+    /* ========================================================
+       HTML SAFETY
+       ======================================================== */
+
+    function escapeHTML(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    /* ========================================================
+       META
+       ======================================================== */
+
+    async function loadMeta() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/meta"
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Metadata request failed."
+                );
+            }
+
+            const data =
+                await response.json();
+
+            firstTrackedDate =
+                parseLocalDate(
+                    data.first_date
+                );
+
+            todayDate =
+                parseLocalDate(
+                    data.today
+                );
+
+            datePicker.min =
+                data.first_date;
+
+            datePicker.max =
+                data.today;
+
+            if (
+                selectedDate <
+                firstTrackedDate
+            ) {
+                selectedDate =
+                    new Date(
+                        firstTrackedDate
+                    );
+            }
+
+            if (
+                selectedDate >
+                todayDate
+            ) {
+                selectedDate =
+                    new Date(
+                        todayDate
+                    );
+            }
+
+            datePicker.value =
+                toDateInputValue(
+                    selectedDate
+                );
+
+            updateNavigation();
+
+        } catch (error) {
+
+            console.error(error);
+
+            todayDate =
+                new Date();
+
+            datePicker.value =
+                toDateInputValue(
+                    selectedDate
+                );
+        }
+    }
+
+
+    /* ========================================================
+       NAVIGATION
+       ======================================================== */
+
+    function updateNavigation() {
+
+        if (
+            !firstTrackedDate ||
+            !todayDate
+        ) {
+            previousButton.disabled =
+                false;
+
+            nextButton.disabled =
+                false;
+
+            return;
+        }
+
+        previousButton.disabled =
+            selectedDate <=
+            firstTrackedDate;
+
+        nextButton.disabled =
+            selectedDate >=
+            todayDate;
+    }
+
+
+    function moveDate(amount) {
+
+        let newDate =
+            addDays(
+                selectedDate,
+                amount
+            );
+
+        if (
+            firstTrackedDate &&
+            newDate < firstTrackedDate
+        ) {
+            newDate =
+                new Date(
+                    firstTrackedDate
+                );
+        }
+
+        if (
+            todayDate &&
+            newDate > todayDate
+        ) {
+            newDate =
+                new Date(
+                    todayDate
+                );
+        }
+
+        selectedDate =
+            newDate;
+
+        datePicker.value =
+            toDateInputValue(
+                selectedDate
+            );
+
+        updateNavigation();
+
+        loadData();
+    }
+
+
+    previousButton.addEventListener(
+        "click",
+        () => moveDate(-1)
+    );
+
+
+    nextButton.addEventListener(
+        "click",
+        () => moveDate(1)
+    );
+
+
+    datePicker.addEventListener(
+        "change",
+        () => {
+
+            if (!datePicker.value) {
+                return;
+            }
+
+            selectedDate =
+                parseLocalDate(
+                    datePicker.value
+                );
+
+            if (
+                firstTrackedDate &&
+                selectedDate <
+                firstTrackedDate
+            ) {
+                selectedDate =
+                    new Date(
+                        firstTrackedDate
+                    );
+            }
+
+            if (
+                todayDate &&
+                selectedDate >
+                todayDate
+            ) {
+                selectedDate =
+                    new Date(
+                        todayDate
+                    );
+            }
+
+            datePicker.value =
+                toDateInputValue(
+                    selectedDate
+                );
+
+            updateNavigation();
+
+            loadData();
+        }
+    );
+
+
+    /* ========================================================
+       RANGE BUTTONS
+       ======================================================== */
+
+    document
+        .querySelectorAll(
+            ".range-button"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".range-button"
+                        )
+                        .forEach(item => {
+                            item.classList.remove(
+                                "active"
+                            );
+                        });
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                    currentRange =
+                        button.dataset.range;
+
+                    loadData();
+                }
+            );
+        });
+
+
+    /* ========================================================
+       GRAPH
+       ======================================================== */
+
+    function renderAggregatedGraph(items) {
+
+        graph.innerHTML = "";
+
+        if (
+            !items ||
+            items.length === 0
+        ) {
+            graph.innerHTML =
+                '<div class="empty">No tracked time in this period.</div>';
+
+            return;
+        }
+
+        const values =
+            items.map(
+                item =>
+                    Number(
+                        item.seconds || 0
+                    )
+            );
+
+        const max =
+            Math.max(
+                ...values,
+                1
+            );
+
+        items.forEach(item => {
+
+            const seconds =
+                Number(
+                    item.seconds || 0
+                );
+
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
+
+            wrapper.className =
+                "bar-wrapper";
+
+            const area =
+                document.createElement(
+                    "div"
+                );
+
+            area.className =
+                "bar-area";
+
+            const bar =
+                document.createElement(
+                    "div"
+                );
+
+            bar.className =
+                "bar";
+
+            const height =
+                seconds > 0
+                    ? Math.max(
+                        2,
+                        (
+                            seconds /
+                            max
+                        ) * 180
+                    )
+                    : 2;
+
+            bar.style.height =
+                `${height}px`;
+
+            bar.title =
+                `${item.label}: ${formatSeconds(seconds)}`;
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+            label.className =
+                "bar-label";
+
+            label.textContent =
+                item.label;
+
+            area.appendChild(bar);
+
+            wrapper.appendChild(area);
+            wrapper.appendChild(label);
+
+            graph.appendChild(wrapper);
+        });
+    }
+
+
+    function renderDayGraph(hourly) {
+
+        const items =
+            hourly.map(item => ({
+                label:
+                    `${pad(item.hour)}:00`,
+                seconds:
+                    item.seconds
+            }));
+
+        renderAggregatedGraph(
+            items
+        );
+    }
+
+
+    function renderDailyGraph(daily) {
+
+        const items =
+            daily.map(item => {
+
+                const date =
+                    parseLocalDate(
+                        item.date
+                    );
+
+                let label;
+
+                if (
+                    currentRange ===
+                    "week"
+                ) {
+                    label =
+                        date.toLocaleDateString(
+                            undefined,
+                            {
+                                weekday:
+                                    "short"
+                            }
+                        );
+                } else {
+                    label =
+                        String(
+                            date.getDate()
+                        );
+                }
+
+                return {
+                    label,
+                    seconds:
+                        item.seconds
+                };
+            });
+
+        renderAggregatedGraph(
+            items
+        );
+    }
+
+
+    function renderLongRangeGraph(data) {
+
+        if (
+            currentRange === "3m" ||
+            currentRange === "6m"
+        ) {
+
+            graphTitle.textContent =
+                `${getRangeTitle()} — weekly usage`;
+
+            const graphData =
+                data.weekly.map(
+                    item => {
+
+                        const endDate =
+                            parseLocalDate(
+                                item.end
+                            );
+
+                        return {
+                            label:
+                                `${formatShortDate(
+                                    item.start
+                                )}–${endDate.getDate()}`,
+
+                            seconds:
+                                item.seconds
+                        };
+                    }
+                );
+
+            renderAggregatedGraph(
+                graphData
+            );
+
+            return;
+        }
+
+        graphTitle.textContent =
+            `${getRangeTitle()} — monthly usage`;
+
+        const graphData =
+            data.monthly.map(
+                item => ({
+                    label:
+                        formatMonth(
+                            item.start
+                        ),
+
+                    seconds:
+                        item.seconds
+                })
+            );
+
+        renderAggregatedGraph(
+            graphData
+        );
+    }
+
+
+    /* ========================================================
+       APPS
+       ======================================================== */
+
+    function renderApps(apps) {
+
+        appsSummary.innerHTML = "";
+        appsList.innerHTML = "";
+
+        if (
+            !apps ||
+            apps.length === 0
+        ) {
+
+            appsSummary.innerHTML =
+                '<div class="empty">No tracked apps.</div>';
+
+            appsList.innerHTML =
+                '<div class="empty">No application usage recorded in this period.</div>';
+
+            return;
+        }
+
+
+        /*
+         * Summary: top five apps
+         */
+
+        apps
+            .slice(0, 5)
+            .forEach(app => {
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+                row.className =
+                    "app-row";
+
+                row.innerHTML = `
+                    <div class="app-name">
+                        ${escapeHTML(app.app)}
+                    </div>
+
+                    <div class="app-time">
+                        ${formatSeconds(app.seconds)}
+                    </div>
+                `;
+
+                appsSummary.appendChild(
+                    row
+                );
+            });
+
+
+        /*
+         * Full app list
+         */
+
+        apps.forEach(app => {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "app-detail";
+
+            row.innerHTML = `
+                <div>
+                    <div class="app-detail-name">
+                        ${escapeHTML(app.app)}
+                    </div>
+
+                    <div class="app-detail-process">
+                        ${escapeHTML(app.process || "")}
+                    </div>
+                </div>
+
+                <div class="app-detail-time">
+                    ${formatSeconds(app.seconds)}
+                </div>
+            `;
+
+            appsList.appendChild(
+                row
+            );
+        });
+    }
+
+
+    /* ========================================================
+       DATA LOADING
+       ======================================================== */
+
+async function loadData(silent = false) {
+
+    if (!silent) {
+        totalElement.textContent =
+            "…";
+
+        totalSubtitle.textContent =
+            "Loading...";
+
+        graph.innerHTML =
+            '<div class="loading">Loading...</div>';
+
+        appsSummary.innerHTML =
+            '<div class="loading">Loading...</div>';
+
+        appsList.innerHTML =
+            '<div class="loading">Loading...</div>';
+    }
+
+    const selected =
+        toDateInputValue(
+            selectedDate
+        );
+
+
+        try {
+
+            /*
+             * DAY
+             */
+
+            if (
+                currentRange === "day"
+            ) {
+
+                const response =
+                    await fetch(
+                        `/api/day?date_string=${selected}`
+                    );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Day request failed."
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                totalElement.textContent =
+                    formatSeconds(
+                        data.total_seconds
+                    );
+
+                graphTitle.textContent =
+                    `${formatDate(selected)} — hourly usage`;
+
+                graphMeta.textContent =
+                    "24 hours";
+
+                renderDayGraph(
+                    data.hourly || []
+                );
+
+                renderApps(
+                    data.apps || []
+                );
+
+                totalSubtitle.textContent =
+                    formatDate(selected);
+
+                statusElement.textContent =
+                    `Showing ${formatDate(selected)}`;
+
+                return;
+            }
+
+
+            /*
+             * WEEK
+             */
+
+            if (
+                currentRange === "week"
+            ) {
+
+                const response =
+                    await fetch(
+                        `/api/week?date_string=${selected}`
+                    );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Week request failed."
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                totalElement.textContent =
+                    formatSeconds(
+                        data.total_seconds
+                    );
+
+                graphTitle.textContent =
+                    `${formatShortDate(data.start)} – ${formatDate(data.end)} — daily usage`;
+
+                graphMeta.textContent =
+                    "7 days";
+
+                renderDailyGraph(
+                    data.daily || []
+                );
+
+                renderApps(
+                    data.apps || []
+                );
+
+                totalSubtitle.textContent =
+                    `${formatDate(data.start)} – ${formatDate(data.end)}`;
+
+                statusElement.textContent =
+                    `Showing ${formatDate(data.start)} – ${formatDate(data.end)}`;
+
+                return;
+            }
+
+
+            /*
+             * MONTH
+             */
+
+            if (
+                currentRange === "month"
+            ) {
+
+                const response =
+                    await fetch(
+                        `/api/month?date_string=${selected}`
+                    );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Month request failed."
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                totalElement.textContent =
+                    formatSeconds(
+                        data.total_seconds
+                    );
+
+                graphTitle.textContent =
+                    `${formatMonth(data.start)} — daily usage`;
+
+                graphMeta.textContent =
+                    "Daily breakdown";
+
+                renderDailyGraph(
+                    data.daily || []
+                );
+
+                renderApps(
+                    data.apps || []
+                );
+
+                totalSubtitle.textContent =
+                    `${formatDate(data.start)} – ${formatDate(data.end)}`;
+
+                statusElement.textContent =
+                    `Showing ${formatDate(data.start)} – ${formatDate(data.end)}`;
+
+                return;
+            }
+
+
+            /*
+             * LONG RANGE
+             */
+
+            let start;
+            let end;
+
+            if (
+                currentRange === "3m"
+            ) {
+
+                start =
+                    new Date(
+                        selectedDate
+                    );
+
+                start.setMonth(
+                    start.getMonth() - 3
+                );
+
+            } else if (
+                currentRange === "6m"
+            ) {
+
+                start =
+                    new Date(
+                        selectedDate
+                    );
+
+                start.setMonth(
+                    start.getMonth() - 6
+                );
+
+            } else {
+
+                start =
+                    new Date(
+                        selectedDate
+                    );
+
+                start.setFullYear(
+                    start.getFullYear() - 1
+                );
+            }
+
+
+            /*
+             * Never request before
+             * the first tracked date.
+             */
+
+            if (
+                firstTrackedDate &&
+                start < firstTrackedDate
+            ) {
+                start =
+                    new Date(
+                        firstTrackedDate
+                    );
+            }
+
+
+            end =
+                new Date(
+                    selectedDate
+                );
+
+
+            const response =
+                await fetch(
+                    `/api/history?start=${toDateInputValue(start)}&end=${toDateInputValue(end)}`
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "History request failed."
+                );
+            }
+
+            const data =
+                await response.json();
+
+
+            totalElement.textContent =
+                formatSeconds(
+                    data.total_seconds
+                );
+
+            renderLongRangeGraph(
+                data
+            );
+
+            renderApps(
+                data.apps || []
+            );
+
+            totalSubtitle.textContent =
+                `${formatDate(start)} – ${formatDate(end)}`;
+
+            statusElement.textContent =
+                `Showing ${formatDate(start)} – ${formatDate(end)}`;
+
+        } catch (error) {
+
+            console.error(error);
+
+            totalElement.textContent =
+                "—";
+
+            totalSubtitle.textContent =
+                "Could not load data.";
+
+            graph.innerHTML =
+                '<div class="empty">Could not load usage data.</div>';
+
+            appsSummary.innerHTML =
+                '<div class="empty">Could not load applications.</div>';
+
+            appsList.innerHTML =
+                '<div class="empty">Could not load application data.</div>';
+
+            statusElement.textContent =
+                "Something went wrong while loading the dashboard.";
+        }
+    }
+
+
+    /* ========================================================
+       AUTO REFRESH
+       ======================================================== */
+
+    setInterval(() => {
+    if (
+        todayDate &&
+        isSameDate(selectedDate, todayDate)
+    ) {
+        loadData(true);
+    }
+}, 10000);
+
+
+    /* ========================================================
+       START
+       ======================================================== */
+
+    async function start() {
+
+        datePicker.value =
+            toDateInputValue(
+                selectedDate
+            );
+
+        await loadMeta();
+
+        await loadData();
+    }
+
+
+    start();
+
+</script>
+
+</body>
+</html>
