@@ -31,8 +31,6 @@
 
             --accent: #f1f3f5;
             --accent-dark: #b8bdc6;
-
-            --danger: #777d87;
         }
 
         * {
@@ -76,8 +74,13 @@
         }
 
         .container {
-            width: min(1180px, calc(100% - 32px));
+            width: min(
+                1180px,
+                calc(100% - 32px)
+            );
+
             margin: 0 auto;
+
             padding: 42px 0 60px;
         }
 
@@ -89,6 +92,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+
             gap: 24px;
 
             margin-bottom: 28px;
@@ -99,6 +103,7 @@
 
             font-size: 32px;
             font-weight: 700;
+
             letter-spacing: -0.8px;
         }
 
@@ -106,6 +111,7 @@
             margin: 7px 0 0;
 
             color: var(--muted);
+
             font-size: 14px;
         }
 
@@ -116,32 +122,40 @@
         .controls {
             display: flex;
             align-items: center;
+
             flex-wrap: wrap;
+
             gap: 8px;
         }
 
         .range-buttons {
             display: flex;
             flex-wrap: wrap;
+
             gap: 5px;
 
             padding: 4px;
 
             background: #0f1115;
+
             border: 1px solid var(--border);
+
             border-radius: 10px;
         }
 
         .range-button {
             border: 0;
+
             background: transparent;
 
             color: var(--muted);
 
             padding: 7px 11px;
+
             border-radius: 7px;
 
             font-size: 12px;
+
             cursor: pointer;
 
             transition:
@@ -151,11 +165,13 @@
 
         .range-button:hover {
             background: #191c21;
+
             color: var(--text);
         }
 
         .range-button.active {
             background: #252a31;
+
             color: var(--text);
         }
 
@@ -166,6 +182,7 @@
         .date-controls {
             display: flex;
             align-items: center;
+
             gap: 6px;
         }
 
@@ -174,6 +191,7 @@
             height: 34px;
 
             border: 1px solid var(--border);
+
             border-radius: 8px;
 
             background: var(--panel);
@@ -190,12 +208,15 @@
 
         .date-button:hover:not(:disabled) {
             background: var(--panel-hover);
+
             color: var(--text);
+
             border-color: var(--border-light);
         }
 
         .date-button:disabled {
             opacity: 0.28;
+
             cursor: default;
         }
 
@@ -205,9 +226,11 @@
             padding: 0 10px;
 
             background: #111419;
+
             color: #f1f3f5;
 
             border: 1px solid var(--border);
+
             border-radius: 8px;
 
             outline: none;
@@ -225,14 +248,11 @@
             border-color: #3a4049;
         }
 
-        /*
-         * Chrome / Edge calendar icon.
-         * The popup itself follows color-scheme: dark.
-         */
-
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(0.8);
+
             opacity: 0.8;
+
             cursor: pointer;
         }
 
@@ -241,27 +261,39 @@
         }
 
         /* =====================================================
-           GRID
+           CARDS
            ===================================================== */
 
         .summary-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+
+            grid-template-columns:
+                1fr
+                1fr;
+
             gap: 14px;
 
             margin-bottom: 14px;
         }
 
         .card {
-            background: rgba(17, 20, 25, 0.92);
+            background:
+                rgba(
+                    17,
+                    20,
+                    25,
+                    0.92
+                );
 
             border: 1px solid var(--border);
+
             border-radius: 12px;
 
             padding: 20px;
 
             box-shadow:
-                0 10px 30px rgba(0, 0, 0, 0.16);
+                0 10px 30px
+                rgba(0, 0, 0, 0.16);
         }
 
         .card-title {
@@ -273,6 +305,7 @@
             font-weight: 600;
 
             text-transform: uppercase;
+
             letter-spacing: 0.7px;
         }
 
@@ -287,28 +320,77 @@
             margin-top: 6px;
 
             color: var(--muted-dark);
+
             font-size: 12px;
         }
 
         /* =====================================================
-           APPS SUMMARY
+           APPLICATION SUMMARY
            ===================================================== */
 
         .apps-summary {
             display: flex;
+
             flex-direction: column;
+
             gap: 8px;
         }
 
-        .app-row {
+        .app-summary-header {
             display: flex;
+
             justify-content: space-between;
             align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 4px;
+
+            padding-bottom: 10px;
+
+            border-bottom:
+                1px solid #1a1d22;
+        }
+
+        .most-used-label {
+            color: var(--muted-dark);
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.6px;
+        }
+
+        .most-used-name {
+            margin-top: 3px;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .most-used-time {
+            color: var(--muted);
+
+            font-size: 11px;
+        }
+
+        .app-row {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto
+                auto;
+
+            align-items: center;
+
             gap: 12px;
 
             padding: 8px 0;
 
-            border-bottom: 1px solid #1a1d22;
+            border-bottom:
+                1px solid #1a1d22;
         }
 
         .app-row:last-child {
@@ -319,10 +401,20 @@
             min-width: 0;
 
             overflow: hidden;
+
             text-overflow: ellipsis;
+
             white-space: nowrap;
 
             font-size: 13px;
+        }
+
+        .app-percent {
+            color: var(--muted-dark);
+
+            font-size: 11px;
+
+            text-align: right;
         }
 
         .app-time {
@@ -331,11 +423,8 @@
             color: var(--muted);
 
             font-size: 12px;
-        }
 
-        .empty {
-            color: var(--muted-dark);
-            font-size: 13px;
+            text-align: right;
         }
 
         /* =====================================================
@@ -348,6 +437,7 @@
 
         .graph-header {
             display: flex;
+
             justify-content: space-between;
             align-items: center;
 
@@ -365,6 +455,7 @@
 
         .graph-meta {
             color: var(--muted-dark);
+
             font-size: 11px;
         }
 
@@ -372,6 +463,7 @@
             height: 240px;
 
             display: flex;
+
             align-items: flex-end;
 
             gap: 8px;
@@ -382,7 +474,10 @@
             padding: 10px 4px 4px;
 
             scrollbar-width: thin;
-            scrollbar-color: #2a2f37 transparent;
+
+            scrollbar-color:
+                #2a2f37
+                transparent;
         }
 
         .graph::-webkit-scrollbar {
@@ -395,6 +490,7 @@
 
         .graph::-webkit-scrollbar-thumb {
             background: #2a2f37;
+
             border-radius: 999px;
         }
 
@@ -408,8 +504,11 @@
             height: 100%;
 
             display: flex;
+
             flex-direction: column;
+
             justify-content: flex-end;
+
             align-items: center;
         }
 
@@ -421,61 +520,89 @@
 
         .bar-area {
             width: 100%;
+
             height: 195px;
 
             display: flex;
+
             align-items: flex-end;
+
             justify-content: center;
         }
 
         .bar {
-    width: min(32px, 72%);
-    min-height: 2px;
-    background: #d9dde3;
-    border-radius: 5px 5px 2px 2px;
-    position: relative;
+            position: relative;
 
-    transition:
-        height 0.25s ease,
-        opacity 0.15s ease,
-        transform 0.15s ease;
-}
+            width:
+                min(
+                    32px,
+                    72%
+                );
 
-.bar:hover {
-    opacity: 0.82;
-    transform: translateY(-2px);
-}
+            min-height: 2px;
+
+            background: #d9dde3;
+
+            border-radius:
+                5px 5px
+                2px 2px;
+
+            transition:
+                height 0.25s ease,
+                opacity 0.15s ease,
+                transform 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .bar:hover {
+            opacity: 0.82;
+
+            transform:
+                translateY(-2px);
+        }
+
+        .bar.current-hour {
+            box-shadow:
+                0 0 0 2px
+                #ffffff;
+        }
+
         .bar-duration {
             position: absolute;
+
             left: 50%;
-            bottom: 6px;
-            transform: translateX(-50%);
+            bottom: 7px;
+
+            transform:
+                translateX(-50%);
+
+            color: #17191d;
+
+            font-size: 9px;
+            font-weight: 600;
+
+            line-height: 1;
 
             white-space: nowrap;
 
-            font-size: 10px;
-            font-weight: 600;
-
-            color: #111419;
             pointer-events: none;
         }
 
         .bar-label {
-            color: #737985;
+            color: #8a909a;
 
             font-size: 10px;
+            font-weight: 500;
 
             white-space: nowrap;
 
-            margin-top: 5px;
+            margin-top: 6px;
 
             text-align: center;
-
-            transform: none;
         }
 
         /* =====================================================
-           APPS
+           APPLICATION LIST
            ===================================================== */
 
         .apps-card {
@@ -484,18 +611,23 @@
 
         .apps-list {
             display: flex;
+
             flex-direction: column;
         }
 
         .app-detail {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto;
 
             gap: 14px;
 
             padding: 12px 0;
 
-            border-bottom: 1px solid #1b1e24;
+            border-bottom:
+                1px solid #1b1e24;
         }
 
         .app-detail:last-child {
@@ -504,6 +636,7 @@
 
         .app-detail-name {
             font-size: 13px;
+
             font-weight: 500;
         }
 
@@ -511,6 +644,7 @@
             margin-top: 3px;
 
             color: var(--muted-dark);
+
             font-size: 10px;
         }
 
@@ -518,6 +652,7 @@
             color: var(--muted);
 
             font-size: 12px;
+
             text-align: right;
         }
 
@@ -536,8 +671,14 @@
         }
 
         /* =====================================================
-           LOADING
+           STATES
            ===================================================== */
+
+        .empty {
+            color: var(--muted-dark);
+
+            font-size: 13px;
+        }
 
         .loading {
             color: var(--muted);
@@ -554,17 +695,20 @@
            ===================================================== */
 
         @media (max-width: 760px) {
+
             .container {
-                width: min(
-                    100% - 20px,
-                    1180px
-                );
+                width:
+                    min(
+                        calc(100% - 20px),
+                        1180px
+                    );
 
                 padding-top: 24px;
             }
 
             header {
                 align-items: flex-start;
+
                 flex-direction: column;
             }
 
@@ -594,6 +738,7 @@
         }
 
         @media (max-width: 480px) {
+
             .title-area h1 {
                 font-size: 28px;
             }
@@ -609,6 +754,16 @@
             .graph {
                 height: 220px;
             }
+
+            .app-row {
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    auto;
+            }
+
+            .app-percent {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -620,12 +775,17 @@
     <header>
 
         <div class="title-area">
-            <h1>TimeTracker</h1>
+
+            <h1>
+                TimeTracker
+            </h1>
 
             <p>
                 Where your time actually went.
             </p>
+
         </div>
+
 
         <div class="controls">
 
@@ -675,6 +835,7 @@
 
             </div>
 
+
             <div class="date-controls">
 
                 <button
@@ -682,7 +843,7 @@
                     class="date-button"
                     title="Previous"
                 >
-                    â€¹
+                    ‹
                 </button>
 
                 <input
@@ -695,7 +856,7 @@
                     class="date-button"
                     title="Next"
                 >
-                    â€º
+                    ›
                 </button>
 
             </div>
@@ -719,7 +880,7 @@
                     id="total"
                     class="total"
                 >
-                    â€”
+                    —
                 </div>
 
                 <div
@@ -770,6 +931,7 @@
 
             </div>
 
+
             <div
                 id="graph"
                 class="graph"
@@ -814,9 +976,12 @@
        ======================================================== */
 
     let currentRange = "day";
-    let selectedDate = new Date();
+
+    let selectedDate =
+        new Date();
 
     let firstTrackedDate = null;
+
     let todayDate = null;
 
 
@@ -825,37 +990,59 @@
        ======================================================== */
 
     const datePicker =
-        document.getElementById("datePicker");
+        document.getElementById(
+            "datePicker"
+        );
 
     const previousButton =
-        document.getElementById("previousButton");
+        document.getElementById(
+            "previousButton"
+        );
 
     const nextButton =
-        document.getElementById("nextButton");
+        document.getElementById(
+            "nextButton"
+        );
 
     const totalElement =
-        document.getElementById("total");
+        document.getElementById(
+            "total"
+        );
 
     const totalSubtitle =
-        document.getElementById("totalSubtitle");
+        document.getElementById(
+            "totalSubtitle"
+        );
 
     const appsSummary =
-        document.getElementById("appsSummary");
+        document.getElementById(
+            "appsSummary"
+        );
 
     const appsList =
-        document.getElementById("appsList");
+        document.getElementById(
+            "appsList"
+        );
 
     const graph =
-        document.getElementById("graph");
+        document.getElementById(
+            "graph"
+        );
 
     const graphTitle =
-        document.getElementById("graphTitle");
+        document.getElementById(
+            "graphTitle"
+        );
 
     const graphMeta =
-        document.getElementById("graphMeta");
+        document.getElementById(
+            "graphMeta"
+        );
 
     const statusElement =
-        document.getElementById("status");
+        document.getElementById(
+            "status"
+        );
 
 
     /* ========================================================
@@ -863,23 +1050,35 @@
        ======================================================== */
 
     function pad(number) {
-        return String(number).padStart(2, "0");
+
+        return String(number)
+            .padStart(
+                2,
+                "0"
+            );
     }
 
 
     function toDateInputValue(date) {
+
         return (
             date.getFullYear() +
             "-" +
-            pad(date.getMonth() + 1) +
+            pad(
+                date.getMonth() + 1
+            ) +
             "-" +
-            pad(date.getDate())
+            pad(
+                date.getDate()
+            )
         );
     }
 
 
     function parseLocalDate(value) {
-        const parts = value.split("-");
+
+        const parts =
+            value.split("-");
 
         return new Date(
             Number(parts[0]),
@@ -890,19 +1089,26 @@
 
 
     function isSameDate(a, b) {
+
         if (!a || !b) {
             return false;
         }
 
         return (
-            a.getFullYear() === b.getFullYear() &&
-            a.getMonth() === b.getMonth() &&
-            a.getDate() === b.getDate()
+            a.getFullYear() ===
+                b.getFullYear() &&
+
+            a.getMonth() ===
+                b.getMonth() &&
+
+            a.getDate() ===
+                b.getDate()
         );
     }
 
 
     function formatDate(value) {
+
         const date =
             typeof value === "string"
                 ? parseLocalDate(value)
@@ -921,6 +1127,7 @@
 
 
     function formatShortDate(value) {
+
         const date =
             typeof value === "string"
                 ? parseLocalDate(value)
@@ -937,6 +1144,7 @@
 
 
     function formatMonth(value) {
+
         const date =
             typeof value === "string"
                 ? parseLocalDate(value)
@@ -953,31 +1161,12 @@
 
 
     function addDays(date, amount) {
+
         const result =
             new Date(date);
 
         result.setDate(
             result.getDate() + amount
-        );
-
-        return result;
-    }
-
-
-    function getWeekStart(date) {
-        const result =
-            new Date(date);
-
-        const day =
-            result.getDay();
-
-        const difference =
-            day === 0
-                ? -6
-                : 1 - day;
-
-        result.setDate(
-            result.getDate() + difference
         );
 
         return result;
@@ -1017,36 +1206,48 @@
     function formatSeconds(seconds) {
 
         seconds =
-            Number(seconds || 0);
+            Number(
+                seconds || 0
+            );
+
 
         if (seconds < 60) {
+
             return (
                 Math.round(seconds) +
                 "s"
             );
         }
 
+
         const minutes =
             Math.floor(
                 seconds / 60
             );
+
 
         const hours =
             Math.floor(
                 minutes / 60
             );
 
+
         const remainingMinutes =
             minutes % 60;
 
+
         if (hours > 0) {
 
-            if (remainingMinutes === 0) {
+            if (
+                remainingMinutes === 0
+            ) {
+
                 return (
                     hours +
                     "h"
                 );
             }
+
 
             return (
                 hours +
@@ -1055,6 +1256,7 @@
                 "m"
             );
         }
+
 
         return (
             minutes +
@@ -1070,11 +1272,31 @@
     function escapeHTML(value) {
 
         return String(value)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
     }
 
 
@@ -1087,29 +1309,38 @@
         try {
 
             const response =
-                await fetch("/api/meta");
+                await fetch(
+                    "/api/meta"
+                );
+
 
             if (!response.ok) {
+
                 throw new Error(
                     "Metadata request failed."
                 );
             }
 
+
             const data =
                 await response.json();
+
 
             firstTrackedDate =
                 parseLocalDate(
                     data.first_date
                 );
 
+
             todayDate =
                 parseLocalDate(
                     data.today
                 );
 
+
             datePicker.min =
                 data.first_date;
+
 
             datePicker.max =
                 data.today;
@@ -1119,6 +1350,7 @@
                 selectedDate <
                 firstTrackedDate
             ) {
+
                 selectedDate =
                     new Date(
                         firstTrackedDate
@@ -1130,6 +1362,7 @@
                 selectedDate >
                 todayDate
             ) {
+
                 selectedDate =
                     new Date(
                         todayDate
@@ -1141,6 +1374,7 @@
                 toDateInputValue(
                     selectedDate
                 );
+
 
             updateNavigation();
 
@@ -1170,12 +1404,6 @@
             !todayDate
         ) {
 
-            previousButton.disabled =
-                false;
-
-            nextButton.disabled =
-                false;
-
             return;
         }
 
@@ -1183,6 +1411,7 @@
         previousButton.disabled =
             selectedDate <=
             firstTrackedDate;
+
 
         nextButton.disabled =
             selectedDate >=
@@ -1203,6 +1432,7 @@
             firstTrackedDate &&
             newDate < firstTrackedDate
         ) {
+
             newDate =
                 new Date(
                     firstTrackedDate
@@ -1214,6 +1444,7 @@
             todayDate &&
             newDate > todayDate
         ) {
+
             newDate =
                 new Date(
                     todayDate
@@ -1224,10 +1455,12 @@
         selectedDate =
             newDate;
 
+
         datePicker.value =
             toDateInputValue(
                 selectedDate
             );
+
 
         updateNavigation();
 
@@ -1264,8 +1497,10 @@
 
             if (
                 firstTrackedDate &&
-                selectedDate < firstTrackedDate
+                selectedDate <
+                    firstTrackedDate
             ) {
+
                 selectedDate =
                     new Date(
                         firstTrackedDate
@@ -1275,8 +1510,10 @@
 
             if (
                 todayDate &&
-                selectedDate > todayDate
+                selectedDate >
+                    todayDate
             ) {
+
                 selectedDate =
                     new Date(
                         todayDate
@@ -1288,6 +1525,7 @@
                 toDateInputValue(
                     selectedDate
                 );
+
 
             updateNavigation();
 
@@ -1301,7 +1539,9 @@
        ======================================================== */
 
     document
-        .querySelectorAll(".range-button")
+        .querySelectorAll(
+            ".range-button"
+        )
         .forEach(button => {
 
             button.addEventListener(
@@ -1328,6 +1568,7 @@
                     currentRange =
                         button.dataset.range;
 
+
                     loadData();
                 }
             );
@@ -1340,7 +1581,7 @@
 
     function renderAggregatedGraph(items) {
 
-        const previousScrollLeft =
+        const previousScroll =
             graph.scrollLeft;
 
 
@@ -1375,10 +1616,6 @@
             );
 
 
-        const now =
-            new Date();
-
-
         const viewingToday =
             currentRange === "day" &&
             isSameDate(
@@ -1388,7 +1625,7 @@
 
 
         const currentHour =
-            now.getHours();
+            new Date().getHours();
 
 
         items.forEach(item => {
@@ -1446,29 +1683,20 @@
                 `${item.label}: ${formatSeconds(seconds)}`;
 
 
-            /*
-             * Highlight the current hour
-             * when viewing today's Day view.
-             */
-
             if (
                 viewingToday &&
                 item.label ===
                     `${pad(currentHour)}:00`
             ) {
 
-                bar.style.boxShadow =
-                    "0 0 0 2px #ffffff";
+                bar.classList.add(
+                    "current-hour"
+                );
 
                 bar.title +=
                     " — current hour";
             }
 
-
-            /*
-             * Show duration inside bars
-             * that are large enough.
-             */
 
             if (
                 height >= 42 &&
@@ -1480,43 +1708,15 @@
                         "div"
                     );
 
+
+                duration.className =
+                    "bar-duration";
+
+
                 duration.textContent =
-                    formatSeconds(seconds);
-
-
-                duration.style.position =
-                    "absolute";
-
-                duration.style.left =
-                    "50%";
-
-                duration.style.bottom =
-                    "7px";
-
-                duration.style.transform =
-                    "translateX(-50%)";
-
-                duration.style.color =
-                    "#17191d";
-
-                duration.style.fontSize =
-                    "9px";
-
-                duration.style.fontWeight =
-                    "600";
-
-                duration.style.lineHeight =
-                    "1";
-
-                duration.style.whiteSpace =
-                    "nowrap";
-
-                duration.style.pointerEvents =
-                    "none";
-
-
-                bar.style.position =
-                    "relative";
+                    formatSeconds(
+                        seconds
+                    );
 
 
                 bar.appendChild(
@@ -1530,8 +1730,10 @@
                     "div"
                 );
 
+
             label.className =
                 "bar-label";
+
 
             label.textContent =
                 item.label;
@@ -1541,13 +1743,16 @@
                 bar
             );
 
+
             wrapper.appendChild(
                 area
             );
 
+
             wrapper.appendChild(
                 label
             );
+
 
             graph.appendChild(
                 wrapper
@@ -1555,31 +1760,29 @@
         });
 
 
-        /*
-         * Keep the graph horizontally
-         * where the user left it during
-         * automatic refresh.
-         */
+        requestAnimationFrame(
+            () => {
 
-        requestAnimationFrame(() => {
-
-            graph.scrollLeft =
-                previousScrollLeft;
-        });
+                graph.scrollLeft =
+                    previousScroll;
+            }
+        );
     }
 
 
     function renderDayGraph(hourly) {
 
         const items =
-            hourly.map(item => ({
+            hourly.map(
+                item => ({
 
-                label:
-                    `${pad(item.hour)}:00`,
+                    label:
+                        `${pad(item.hour)}:00`,
 
-                seconds:
-                    item.seconds
-            }));
+                    seconds:
+                        item.seconds
+                })
+            );
 
 
         renderAggregatedGraph(
@@ -1591,46 +1794,50 @@
     function renderDailyGraph(daily) {
 
         const items =
-            daily.map(item => {
+            daily.map(
+                item => {
 
-                const date =
-                    parseLocalDate(
-                        item.date
-                    );
-
-
-                let label;
-
-
-                if (
-                    currentRange ===
-                    "week"
-                ) {
-
-                    label =
-                        date.toLocaleDateString(
-                            undefined,
-                            {
-                                weekday:
-                                    "short"
-                            }
+                    const date =
+                        parseLocalDate(
+                            item.date
                         );
 
-                } else {
 
-                    label =
-                        String(
-                            date.getDate()
-                        );
+                    let label;
+
+
+                    if (
+                        currentRange ===
+                        "week"
+                    ) {
+
+                        label =
+                            date.toLocaleDateString(
+                                undefined,
+                                {
+                                    weekday:
+                                        "short"
+                                }
+                            );
+
+                    } else {
+
+                        label =
+                            String(
+                                date.getDate()
+                            );
+                    }
+
+
+                    return {
+
+                        label,
+
+                        seconds:
+                            item.seconds
+                    };
                 }
-
-
-                return {
-                    label,
-                    seconds:
-                        item.seconds
-                };
-            });
+            );
 
 
         renderAggregatedGraph(
@@ -1650,7 +1857,11 @@
                 `${getRangeTitle()} — weekly usage`;
 
 
-            const graphData =
+            graphMeta.textContent =
+                "Weekly breakdown";
+
+
+            const items =
                 data.weekly.map(
                     item => {
 
@@ -1675,8 +1886,9 @@
 
 
             renderAggregatedGraph(
-                graphData
+                items
             );
+
 
             return;
         }
@@ -1686,7 +1898,11 @@
             `${getRangeTitle()} — monthly usage`;
 
 
-        const graphData =
+        graphMeta.textContent =
+            "Monthly breakdown";
+
+
+        const items =
             data.monthly.map(
                 item => ({
 
@@ -1702,19 +1918,23 @@
 
 
         renderAggregatedGraph(
-            graphData
+            items
         );
     }
 
 
     /* ========================================================
-       APPS
+       APPLICATION SUMMARY
        ======================================================== */
 
     function renderApps(apps) {
 
-        appsSummary.innerHTML = "";
-        appsList.innerHTML = "";
+        appsSummary.innerHTML =
+            "";
+
+
+        appsList.innerHTML =
+            "";
 
 
         if (
@@ -1725,20 +1945,144 @@
             appsSummary.innerHTML =
                 '<div class="empty">No tracked apps.</div>';
 
+
             appsList.innerHTML =
                 '<div class="empty">No application usage recorded in this period.</div>';
+
 
             return;
         }
 
 
+        const totalSeconds =
+            apps.reduce(
+                (
+                    total,
+                    app
+                ) =>
+                    total +
+                    Number(
+                        app.seconds || 0
+                    ),
+                0
+            );
+
+
+        const topApp =
+            apps[0];
+
+
         /*
-         * Top five apps.
+         * Most-used insight.
+         */
+
+        const insight =
+            document.createElement(
+                "div"
+            );
+
+
+        insight.className =
+            "app-summary-header";
+
+
+        const insightLeft =
+            document.createElement(
+                "div"
+            );
+
+
+        const insightLabel =
+            document.createElement(
+                "div"
+            );
+
+
+        insightLabel.className =
+            "most-used-label";
+
+
+        insightLabel.textContent =
+            "Most used";
+
+
+        const insightName =
+            document.createElement(
+                "div"
+            );
+
+
+        insightName.className =
+            "most-used-name";
+
+
+        insightName.textContent =
+            topApp.app;
+
+
+        insightLeft.appendChild(
+            insightLabel
+        );
+
+
+        insightLeft.appendChild(
+            insightName
+        );
+
+
+        const insightRight =
+            document.createElement(
+                "div"
+            );
+
+
+        insightRight.className =
+            "most-used-time";
+
+
+        insightRight.textContent =
+            formatSeconds(
+                topApp.seconds
+            );
+
+
+        insight.appendChild(
+            insightLeft
+        );
+
+
+        insight.appendChild(
+            insightRight
+        );
+
+
+        appsSummary.appendChild(
+            insight
+        );
+
+
+        /*
+         * Top applications.
          */
 
         apps
             .slice(0, 5)
             .forEach(app => {
+
+                const seconds =
+                    Number(
+                        app.seconds || 0
+                    );
+
+
+                const percentage =
+                    totalSeconds > 0
+                        ? (
+                            seconds /
+                            totalSeconds
+                        ) * 100
+                        : 0;
+
 
                 const row =
                     document.createElement(
@@ -1750,15 +2094,65 @@
                     "app-row";
 
 
-                row.innerHTML = `
-                    <div class="app-name">
-                        ${escapeHTML(app.app)}
-                    </div>
+                const name =
+                    document.createElement(
+                        "div"
+                    );
 
-                    <div class="app-time">
-                        ${formatSeconds(app.seconds)}
-                    </div>
-                `;
+
+                name.className =
+                    "app-name";
+
+
+                name.textContent =
+                    app.app;
+
+
+                const percent =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                percent.className =
+                    "app-percent";
+
+
+                percent.textContent =
+                    `${Math.round(
+                        percentage
+                    )}%`;
+
+
+                const time =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                time.className =
+                    "app-time";
+
+
+                time.textContent =
+                    formatSeconds(
+                        seconds
+                    );
+
+
+                row.appendChild(
+                    name
+                );
+
+
+                row.appendChild(
+                    percent
+                );
+
+
+                row.appendChild(
+                    time
+                );
 
 
                 appsSummary.appendChild(
@@ -1768,7 +2162,7 @@
 
 
         /*
-         * Full app list.
+         * Full application list.
          */
 
         apps.forEach(app => {
@@ -1783,21 +2177,79 @@
                 "app-detail";
 
 
-            row.innerHTML = `
-                <div>
-                    <div class="app-detail-name">
-                        ${escapeHTML(app.app)}
-                    </div>
+            const left =
+                document.createElement(
+                    "div"
+                );
 
-                    <div class="app-detail-process">
-                        ${escapeHTML(app.process || "")}
-                    </div>
-                </div>
 
-                <div class="app-detail-time">
-                    ${formatSeconds(app.seconds)}
-                </div>
-            `;
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+
+            name.className =
+                "app-detail-name";
+
+
+            name.textContent =
+                app.app;
+
+
+            const process =
+                document.createElement(
+                    "div"
+                );
+
+
+            process.className =
+                "app-detail-process";
+
+
+            process.textContent =
+                app.process || "";
+
+
+            left.appendChild(
+                name
+            );
+
+
+            if (
+                app.process
+            ) {
+
+                left.appendChild(
+                    process
+                );
+            }
+
+
+            const time =
+                document.createElement(
+                    "div"
+                );
+
+
+            time.className =
+                "app-detail-time";
+
+
+            time.textContent =
+                formatSeconds(
+                    app.seconds
+                );
+
+
+            row.appendChild(
+                left
+            );
+
+
+            row.appendChild(
+                time
+            );
 
 
             appsList.appendChild(
@@ -1811,12 +2263,15 @@
        DATA LOADING
        ======================================================== */
 
-    async function loadData(silent = false) {
+    async function loadData(
+        silent = false
+    ) {
 
         if (!silent) {
 
             totalElement.textContent =
                 "…";
+
 
             totalSubtitle.textContent =
                 "Loading...";
@@ -1876,7 +2331,9 @@
 
 
                 graphTitle.textContent =
-                    `${formatDate(selected)} — hourly usage`;
+                    `${formatDate(
+                        selected
+                    )} — hourly usage`;
 
 
                 graphMeta.textContent =
@@ -1894,11 +2351,15 @@
 
 
                 totalSubtitle.textContent =
-                    formatDate(selected);
+                    formatDate(
+                        selected
+                    );
 
 
                 statusElement.textContent =
-                    `Showing ${formatDate(selected)}`;
+                    `Showing ${formatDate(
+                        selected
+                    )}`;
 
 
                 return;
@@ -1938,7 +2399,11 @@
 
 
                 graphTitle.textContent =
-                    `${formatShortDate(data.start)} – ${formatDate(data.end)} — daily usage`;
+                    `${formatShortDate(
+                        data.start
+                    )} – ${formatDate(
+                        data.end
+                    )} — daily usage`;
 
 
                 graphMeta.textContent =
@@ -1956,11 +2421,19 @@
 
 
                 totalSubtitle.textContent =
-                    `${formatDate(data.start)} – ${formatDate(data.end)}`;
+                    `${formatDate(
+                        data.start
+                    )} – ${formatDate(
+                        data.end
+                    )}`;
 
 
                 statusElement.textContent =
-                    `Showing ${formatDate(data.start)} – ${formatDate(data.end)}`;
+                    `Showing ${formatDate(
+                        data.start
+                    )} – ${formatDate(
+                        data.end
+                    )}`;
 
 
                 return;
@@ -2000,7 +2473,9 @@
 
 
                 graphTitle.textContent =
-                    `${formatMonth(data.start)} — daily usage`;
+                    `${formatMonth(
+                        data.start
+                    )} — daily usage`;
 
 
                 graphMeta.textContent =
@@ -2018,11 +2493,19 @@
 
 
                 totalSubtitle.textContent =
-                    `${formatDate(data.start)} – ${formatDate(data.end)}`;
+                    `${formatDate(
+                        data.start
+                    )} – ${formatDate(
+                        data.end
+                    )}`;
 
 
                 statusElement.textContent =
-                    `Showing ${formatDate(data.start)} – ${formatDate(data.end)}`;
+                    `Showing ${formatDate(
+                        data.start
+                    )} – ${formatDate(
+                        data.end
+                    )}`;
 
 
                 return;
@@ -2034,7 +2517,6 @@
                ================================================== */
 
             let start;
-            let end;
 
 
             if (
@@ -2079,14 +2561,10 @@
             }
 
 
-            /*
-             * Never request before
-             * the first tracked date.
-             */
-
             if (
                 firstTrackedDate &&
-                start < firstTrackedDate
+                start <
+                    firstTrackedDate
             ) {
 
                 start =
@@ -2096,15 +2574,11 @@
             }
 
 
-            end =
-                new Date(
-                    selectedDate
-                );
-
-
             const response =
                 await fetch(
-                    `/api/history?start=${toDateInputValue(start)}&end=${toDateInputValue(end)}`
+                    `/api/history?start=${toDateInputValue(
+                        start
+                    )}&end=${selected}`
                 );
 
 
@@ -2137,12 +2611,19 @@
 
 
             totalSubtitle.textContent =
-                `${formatDate(start)} – ${formatDate(end)}`;
+                `${formatDate(
+                    start
+                )} – ${formatDate(
+                    selected
+                )}`;
 
 
             statusElement.textContent =
-                `Showing ${formatDate(start)} – ${formatDate(end)}`;
-
+                `Showing ${formatDate(
+                    start
+                )} – ${formatDate(
+                    selected
+                )}`;
 
         } catch (error) {
 
@@ -2179,11 +2660,12 @@
        AUTO REFRESH
        ======================================================== */
 
-    setInterval(() => {
-
-        loadData(true);
-
-    }, 10000);
+    setInterval(
+        () => {
+            loadData(true);
+        },
+        10000
+    );
 
 
     /* ========================================================
@@ -2205,7 +2687,6 @@
 
 
     start();
-
 </script>
 
 </body>
