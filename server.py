@@ -819,8 +819,10 @@ def get_history(start: str, end: str):
 
 
 # check
-@app.route("/api/protection/processes")
+@app.get("/api/protection/processes")
 def protection_processes():
+    import psutil
+
     processes = {}
 
     for process in psutil.process_iter(["name"]):
@@ -835,9 +837,12 @@ def protection_processes():
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
 
-    return jsonify({
-        "processes": sorted(processes.values(), key=str.lower)
-    })
+    return {
+        "processes": sorted(
+            processes.values(),
+            key=str.lower,
+        )
+    }
 
 # end of check
 
