@@ -1563,6 +1563,69 @@
             </div>
         </section>
 
+        <section class="card goals-card" id="goalsSection">
+    <div class="goals-header">
+        <div>
+            <h2>🎯 Goals & Tasks</h2>
+            <p>What do you want to accomplish?</p>
+        </div>
+
+        <button class="goals-add-button" id="addGoalButton" type="button">
+            + Add task
+        </button>
+    </div>
+
+    <div class="goals-form hidden" id="goalForm">
+        <div class="goal-form-row">
+            <input
+                id="goalName"
+                type="text"
+                placeholder="e.g. Practice guitar"
+                maxlength="100"
+            />
+
+            <input
+                id="goalMinutes"
+                type="number"
+                min="0"
+                max="1440"
+                placeholder="Minutes (optional)"
+            />
+
+            <button id="saveGoalButton" type="button">
+                Add
+            </button>
+
+            <button id="cancelGoalButton" type="button">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <div class="goals-summary" id="goalsSummary">
+        <div class="goal-summary-stat">
+            <strong id="goalsCompletedCount">0</strong>
+            <span>completed</span>
+        </div>
+
+        <div class="goal-summary-stat">
+            <strong id="goalsRemainingCount">0</strong>
+            <span>remaining</span>
+        </div>
+
+        <div class="goal-summary-stat">
+            <strong id="goalsCompletionPercent">0%</strong>
+            <span>completed today</span>
+        </div>
+    </div>
+
+    <div class="goals-list" id="goalsList">
+        <div class="goals-empty">
+            No goals for today yet.
+        </div>
+    </div>
+</section>
+
 
 <section class="card apps-card">
 
