@@ -2,7 +2,7 @@ import time
 import ctypes
 import sqlite3
 from ctypes import wintypes
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import psutil
@@ -35,17 +35,57 @@ user32.GetWindowThreadProcessId.argtypes = [
 ]
 
 
+# Used to detect keyboard/mouse inactivity.
+class LASTINPUTINFO(ctypes.Structure):
+    _fields_ = [
+        ("cbSize", wintypes.UINT),
+        ("dwTime", wintypes.DWORD),
+    ]
+
+
+user32.GetLastInputInfo.argtypes = [
+    ctypes.POINTER(LASTINPUTINFO)
+]
+
+user32.GetLastInputInfo.restype = wintypes.BOOL
+
+
 # --------------------------------------------------
 # Settings
 # --------------------------------------------------
 
 CHECKPOINT_SECONDS = 10
 
+# If there has been no keyboard/mouse input for this long,
+# the user is considered AFK and time stops being tracked.
+AFK_SECONDS = 120
 
+
+# Windows/system processes that should never count as
+# meaningful application usage.
 IGNORED_PROCESSES = {
+    # Windows shell / desktop
+    "explorer.exe",
     "SearchHost.exe",
     "StartMenuExperienceHost.exe",
     "ShellExperienceHost.exe",
+
+    # Windows system UI
+    "Taskmgr.exe",
+    "SnippingTool.exe",
+    "ScreenClippingHost.exe",
+    "TextInputHost.exe",
+    "LockApp.exe",
+    "SearchApp.exe",
+    "ApplicationFrameHost.exe",
+
+    # Windows background/UI infrastructure
+    "RuntimeBroker.exe",
+    "sihost.exe",
+    "dwm.exe",
+    "ctfmon.exe",
+    "conhost.exe",
+    "dllhost.exe",
 }
 
 
@@ -55,7 +95,11 @@ APP_NAMES = {
     "chrome.exe": "Google Chrome",
     "Code.exe": "Visual Studio Code",
     "notepad.exe": "Notepad",
-    "explorer.exe": "Windows Explorer",
+
+    # Useful built-in apps stay trackable.
+    "mspaint.exe": "Paint",
+    "PaintStudio.View.exe": "Paint",
+    "CalculatorApp.exe": "Calculator",
 }
 
 
@@ -91,6 +135,9 @@ def save_session(
         return
 
     if process_name in IGNORED_PROCESSES:
+        return
+
+    if not started_at or not ended_at:
         return
 
     duration = (ended_at - started_at).total_seconds()
@@ -144,6 +191,36 @@ def get_app_name(process_name):
         process_name,
         process_name.removesuffix(".exe"),
     )
+
+
+# --------------------------------------------------
+# AFK detection
+# --------------------------------------------------
+
+def get_idle_seconds():
+    """
+    Return the number of seconds since the user's last
+    keyboard or mouse input.
+
+    Windows gives us the last-input tick count, which is
+    independent of which application currently has focus.
+    """
+
+    info = LASTINPUTINFO()
+    info.cbSize = ctypes.sizeof(LASTINPUTINFO)
+
+    if not user32.GetLastInputInfo(ctypes.byref(info)):
+        return 0
+
+    current_tick = ctypes.windll.kernel32.GetTickCount()
+
+    elapsed_ms = (current_tick - info.dwTime) & 0xFFFFFFFF
+
+    return elapsed_ms / 1000.0
+
+
+def is_user_afk():
+    return get_idle_seconds() >= AFK_SECONDS
 
 
 # --------------------------------------------------
@@ -206,14 +283,34 @@ def get_active_app():
 setup_database()
 
 current_process, current_window = get_active_app()
-session_started = datetime.now()
+
+# If the computer is already AFK when the tracker starts,
+# don't immediately start counting the foreground app.
+currently_afk = is_user_afk()
+
+if currently_afk:
+    current_process = None
+    current_window = None
+
+session_started = (
+    datetime.now()
+    if current_process
+    else None
+)
+
 last_checkpoint = session_started
+
 
 print("TimeTracker started.")
 print(f"Active app: {get_app_name(current_process)}")
 print(f"Window: {current_window}")
+print(f"AFK threshold: {AFK_SECONDS}s")
 print(f"Database: {DB_PATH}")
 print()
+
+if currently_afk:
+    print("Currently AFK — tracking paused until you return.")
+    print()
 
 
 # --------------------------------------------------
@@ -226,7 +323,89 @@ try:
 
         now_time = datetime.now()
 
+        idle_seconds = get_idle_seconds()
+        user_is_afk = idle_seconds >= AFK_SECONDS
+
+        # ------------------------------------------
+        # User became AFK
+        # ------------------------------------------
+
+        if user_is_afk and not currently_afk:
+
+            currently_afk = True
+
+            # The user's last real interaction happened
+            # idle_seconds ago. Don't count the AFK period.
+            last_active_time = (
+                now_time
+                - timedelta(seconds=idle_seconds)
+            )
+
+            if current_process and session_started:
+                save_session(
+                    current_process,
+                    current_window,
+                    session_started,
+                    last_active_time,
+                )
+
+            print(
+                f"[{now_time.strftime('%H:%M:%S')}] "
+                f"AFK detected — tracking paused."
+            )
+
+            current_process = None
+            current_window = None
+            session_started = None
+            last_checkpoint = None
+
+            continue
+
+
+        # ------------------------------------------
+        # User is still AFK
+        # ------------------------------------------
+
+        if user_is_afk:
+            continue
+
+
+        # ------------------------------------------
+        # User returned from AFK
+        # ------------------------------------------
+
+        if currently_afk:
+
+            currently_afk = False
+
+            new_process, new_window = get_active_app()
+
+            current_process = new_process
+            current_window = new_window
+
+            if current_process:
+                session_started = now_time
+                last_checkpoint = now_time
+
+                print(
+                    f"[{now_time.strftime('%H:%M:%S')}] "
+                    f"Welcome back — tracking "
+                    f"{get_app_name(current_process)}"
+                )
+
+            else:
+                session_started = None
+                last_checkpoint = None
+
+            continue
+
+
+        # ------------------------------------------
+        # Normal tracking
+        # ------------------------------------------
+
         new_process, new_window = get_active_app()
+
 
         # ------------------------------------------
         # App changed
@@ -236,12 +415,13 @@ try:
 
             session_ended = now_time
 
-            save_session(
-                current_process,
-                current_window,
-                session_started,
-                session_ended,
-            )
+            if current_process and session_started:
+                save_session(
+                    current_process,
+                    current_window,
+                    session_started,
+                    session_ended,
+                )
 
             if new_process:
                 print(
@@ -251,8 +431,14 @@ try:
 
             current_process = new_process
             current_window = new_window
-            session_started = session_ended
-            last_checkpoint = session_ended
+
+            if new_process:
+                session_started = session_ended
+                last_checkpoint = session_ended
+            else:
+                session_started = None
+                last_checkpoint = None
+
 
         # ------------------------------------------
         # Periodic checkpoint
@@ -260,8 +446,11 @@ try:
 
         elif (
             current_process
-            and (now_time - last_checkpoint).total_seconds()
-            >= CHECKPOINT_SECONDS
+            and session_started
+            and last_checkpoint
+            and (
+                now_time - last_checkpoint
+            ).total_seconds() >= CHECKPOINT_SECONDS
         ):
 
             save_session(
@@ -274,14 +463,18 @@ try:
             session_started = now_time
             last_checkpoint = now_time
 
+
         # ------------------------------------------
         # Initial live save
         # ------------------------------------------
 
         elif (
             current_process
+            and session_started
             and last_checkpoint == session_started
-            and (now_time - session_started).total_seconds() >= 1
+            and (
+                now_time - session_started
+            ).total_seconds() >= 1
         ):
 
             save_session(
@@ -303,12 +496,13 @@ except KeyboardInterrupt:
 
     session_ended = datetime.now()
 
-    save_session(
-        current_process,
-        current_window,
-        session_started,
-        session_ended,
-    )
+    if current_process and session_started and not currently_afk:
+        save_session(
+            current_process,
+            current_window,
+            session_started,
+            session_ended,
+        )
 
     print()
     print("TimeTracker stopped.")
