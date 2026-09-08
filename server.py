@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime, date, timedelta
 import sqlite3
+import json
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
@@ -13,7 +14,7 @@ from fastapi.responses import FileResponse
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "timetracker.db"
 STATIC_DIR = BASE_DIR / "static"
-
+PROTECTION_PATH = BASE_DIR / "protection.json"
 
 # ============================================================
 # App
@@ -723,6 +724,50 @@ def api_month(date_string: str):
 # API — arbitrary history
 # ============================================================
 
+# ============================================================
+# API — daily application history
+# ============================================================
+
+@app.get("/api/history/apps-by-day")
+def get_history_apps_by_day(start: str, end: str):
+    start_date = parse_date(start)
+    end_date = parse_date(end)
+
+    if end_date < start_date:
+        raise HTTPException(
+            status_code=400,
+            detail="End date cannot be before start date.",
+        )
+
+    results = []
+
+    current_date = start_date
+
+    while current_date <= end_date:
+        apps = get_app_totals(
+            current_date,
+            current_date,
+        )
+
+        total_seconds = sum(
+            float(item["seconds"])
+            for item in apps
+        )
+
+        results.append({
+            "date": current_date.isoformat(),
+            "total_seconds": format_seconds(
+                total_seconds
+            ),
+            "apps": apps,
+        })
+
+        current_date += timedelta(days=1)
+
+    return results
+
+
+
 @app.get("/api/history")
 def get_history(start: str, end: str):
     start_date = parse_date(start)
@@ -771,6 +816,103 @@ def get_history(start: str, end: str):
         "apps": apps,
     }
 
+
+# ============================================================
+# API — protection
+# ============================================================
+
+DEFAULT_PROTECTION_CONFIG = {
+    "enabled": True,
+    "apps": {}
+}
+
+
+def load_protection_config():
+    if not PROTECTION_PATH.exists():
+        save_protection_config(
+            DEFAULT_PROTECTION_CONFIG
+        )
+
+        return DEFAULT_PROTECTION_CONFIG.copy()
+
+    try:
+        with PROTECTION_PATH.open(
+            "r",
+            encoding="utf-8"
+        ) as file:
+            config = json.load(file)
+
+        if not isinstance(config, dict):
+            return DEFAULT_PROTECTION_CONFIG.copy()
+
+        config.setdefault(
+            "enabled",
+            True
+        )
+
+        config.setdefault(
+            "apps",
+            {}
+        )
+
+        return config
+
+    except (
+        OSError,
+        json.JSONDecodeError
+    ):
+        return DEFAULT_PROTECTION_CONFIG.copy()
+
+
+def save_protection_config(config):
+    with PROTECTION_PATH.open(
+        "w",
+        encoding="utf-8"
+    ) as file:
+        json.dump(
+            config,
+            file,
+            indent=4
+        )
+
+
+@app.get("/api/protection")
+def get_protection():
+    return load_protection_config()
+
+
+@app.post("/api/protection")
+def update_protection(config: dict):
+    if not isinstance(config, dict):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid protection configuration."
+        )
+
+    config.setdefault(
+        "enabled",
+        True
+    )
+
+    config.setdefault(
+        "apps",
+        {}
+    )
+
+    if not isinstance(
+        config["apps"],
+        dict
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid apps configuration."
+        )
+
+    save_protection_config(
+        config
+    )
+
+    return config
 
 # ============================================================
 # Dashboard

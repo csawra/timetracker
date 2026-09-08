@@ -1,6 +1,8 @@
 import time
 import ctypes
 import sqlite3
+import psutil
+import protection
 from ctypes import wintypes
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -379,6 +381,17 @@ try:
             currently_afk = False
 
             new_process, new_window = get_active_app()
+
+        # ------------------------------------------
+        # Protection
+        # ------------------------------------------
+
+        if new_process:
+            if protection.check_and_enforce(
+                new_process
+            ):
+                new_process = None
+                new_window = None
 
             current_process = new_process
             current_window = new_window
