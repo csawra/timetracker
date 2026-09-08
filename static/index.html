@@ -1557,6 +1557,279 @@
             }
         }
 
+        /* =====================================================
+   PROTECTION
+   ===================================================== */
+
+.protection-card {
+    margin-bottom: 14px;
+}
+
+.protection-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.protection-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 650;
+}
+
+.protection-description {
+    margin: 5px 0 0;
+    color: var(--muted-dark);
+    font-size: 11px;
+}
+
+.protection-master {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.protection-switch {
+    width: 38px;
+    height: 22px;
+    padding: 2px;
+
+    border: 1px solid var(--border-light);
+    border-radius: 999px;
+
+    background: #171a20;
+    cursor: pointer;
+}
+
+.protection-switch::after {
+    content: "";
+    display: block;
+
+    width: 16px;
+    height: 16px;
+
+    border-radius: 50%;
+    background: #777d87;
+
+    transition: transform 0.15s ease;
+}
+
+.protection-switch.enabled::after {
+    transform: translateX(14px);
+    background: #d9dde3;
+}
+
+.protection-apps {
+    display: flex;
+    flex-direction: column;
+}
+
+.protection-app {
+    padding: 13px 0;
+    border-bottom: 1px solid #1b1e24;
+}
+
+.protection-app:last-child {
+    border-bottom: 0;
+}
+
+.protection-app-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.protection-app-name {
+    min-width: 0;
+}
+
+.protection-app-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.protection-app-process {
+    margin-top: 3px;
+    color: var(--muted-dark);
+    font-size: 10px;
+}
+
+.protection-app-usage {
+    color: var(--muted);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.protection-app-toggle {
+    padding: 5px 8px;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    background: #171a20;
+    color: var(--muted);
+
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.protection-app-toggle.enabled {
+    color: var(--text);
+    border-color: var(--border-light);
+}
+
+.protection-progress {
+    height: 6px;
+    margin-top: 8px;
+
+    overflow: hidden;
+
+    background: #1b1f25;
+    border-radius: 999px;
+}
+
+.protection-progress-fill {
+    height: 100%;
+    width: 0;
+
+    background: #d9dde3;
+    border-radius: inherit;
+
+    transition: width 0.25s ease;
+}
+
+.protection-app-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.protection-edit-input {
+    width: 90px;
+    height: 28px;
+
+    padding: 0 8px;
+
+    background: #111419;
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: 11px;
+}
+
+.protection-small-button {
+    height: 28px;
+    padding: 0 9px;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    background: #171a20;
+    color: var(--muted);
+
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.protection-small-button:hover {
+    color: var(--text);
+    border-color: var(--border-light);
+}
+
+.protection-add-form {
+    display: none;
+
+    grid-template-columns: minmax(0, 1fr) 110px auto;
+    gap: 7px;
+
+    padding-top: 12px;
+}
+
+.protection-add-form.open {
+    display: grid;
+}
+
+.protection-add-form input {
+    height: 32px;
+
+    padding: 0 9px;
+
+    background: #111419;
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    outline: none;
+
+    font-size: 11px;
+}
+
+.protection-add-form input:focus {
+    border-color: #414750;
+}
+
+.protection-add-button {
+    height: 32px;
+    padding: 0 10px;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    background: #171a20;
+    color: var(--text);
+
+    font-size: 10px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.protection-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.protection-empty {
+    padding: 22px 0;
+
+    color: var(--muted-dark);
+    font-size: 11px;
+
+    text-align: center;
+}
+
+@media (max-width: 700px) {
+    .protection-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .protection-app-top {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .protection-app-usage {
+        grid-column: 1;
+    }
+
+    .protection-app-toggle {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .protection-add-form {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* =====================================================
            APPLICATION LIST
            ===================================================== */
@@ -2118,6 +2391,89 @@
     </div>
 </section>
 
+<section class="card protection-card" id="protectionSection">
+
+    <div class="protection-header">
+
+        <div>
+            <h2 class="protection-title">
+                🛡️ Protection
+            </h2>
+
+            <p class="protection-description">
+                Protect selected apps from eating your day.
+            </p>
+        </div>
+
+        <div class="protection-master">
+            <span
+                id="protectionMasterLabel"
+                class="protection-description"
+            >
+                ON
+            </span>
+
+            <button
+                id="protectionMasterToggle"
+                class="protection-switch enabled"
+                type="button"
+                aria-label="Toggle protection"
+            ></button>
+        </div>
+
+    </div>
+
+    <div
+        id="protectionApps"
+        class="protection-apps"
+    >
+        <div class="protection-empty">
+            No protected apps yet.
+        </div>
+    </div>
+
+    <div
+        id="protectionAddForm"
+        class="protection-add-form"
+    >
+
+        <input
+            id="protectionProcessInput"
+            type="text"
+            placeholder="Process name, e.g. Discord.exe"
+        />
+
+        <input
+            id="protectionLimitInput"
+            type="number"
+            min="1"
+            max="1440"
+            placeholder="Minutes"
+        />
+
+        <button
+            id="protectionSaveButton"
+            class="protection-add-button"
+            type="button"
+        >
+            Add
+        </button>
+
+    </div>
+
+    <div class="protection-footer">
+
+        <button
+            id="protectionAddButton"
+            class="protection-small-button"
+            type="button"
+        >
+            + Add limit
+        </button>
+
+    </div>
+
+</section>
 
 <section class="card apps-card">
 
@@ -6297,6 +6653,775 @@ renderGoals = function(apps = null) {
 
     renderWeeklyGoals();
 };
+
+/* ========================================================
+   PROTECTION
+   ======================================================== */
+
+let protectionConfig = {
+    enabled: true,
+    apps: {}
+};
+
+
+const protectionAppsElement =
+    document.getElementById(
+        "protectionApps"
+    );
+
+const protectionMasterToggle =
+    document.getElementById(
+        "protectionMasterToggle"
+    );
+
+const protectionMasterLabel =
+    document.getElementById(
+        "protectionMasterLabel"
+    );
+
+const protectionAddButton =
+    document.getElementById(
+        "protectionAddButton"
+    );
+
+const protectionAddForm =
+    document.getElementById(
+        "protectionAddForm"
+    );
+
+const protectionProcessInput =
+    document.getElementById(
+        "protectionProcessInput"
+    );
+
+const protectionLimitInput =
+    document.getElementById(
+        "protectionLimitInput"
+    );
+
+const protectionSaveButton =
+    document.getElementById(
+        "protectionSaveButton"
+    );
+
+
+function protectionEscape(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function protectionFormatTime(seconds) {
+
+    seconds = Math.max(
+        0,
+        Number(seconds) || 0
+    );
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+    if (minutes < 60) {
+        return `${minutes} min`;
+    }
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+    const remainingMinutes =
+        minutes % 60;
+
+    if (remainingMinutes === 0) {
+        return `${hours}h`;
+    }
+
+    return `${hours}h ${remainingMinutes}m`;
+}
+
+
+function protectionNormalizeProcessName(name) {
+
+    return String(name || "")
+        .trim()
+        .toLowerCase();
+}
+
+
+function protectionGetAppConfig(processName) {
+
+    const apps =
+        protectionConfig.apps || {};
+
+    const key =
+        Object.keys(apps).find(
+            existingName =>
+                protectionNormalizeProcessName(
+                    existingName
+                ) ===
+                protectionNormalizeProcessName(
+                    processName
+                )
+        );
+
+    if (!key) {
+        return null;
+    }
+
+    return {
+        key,
+        config: apps[key]
+    };
+}
+
+
+function protectionSetMasterUI() {
+
+    const enabled =
+        protectionConfig.enabled !== false;
+
+    protectionMasterToggle.classList.toggle(
+        "enabled",
+        enabled
+    );
+
+    protectionMasterLabel.textContent =
+        enabled
+            ? "ON"
+            : "OFF";
+}
+
+
+async function protectionSave() {
+
+    const response =
+        await fetch(
+            "/api/protection",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(
+                        protectionConfig
+                    )
+            }
+        );
+
+    if (!response.ok) {
+        throw new Error(
+            "Could not save protection settings."
+        );
+    }
+
+    protectionConfig =
+        await response.json();
+
+    protectionSetMasterUI();
+}
+
+
+async function loadProtection() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/protection"
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Protection request failed."
+            );
+        }
+
+        const data =
+            await response.json();
+
+        protectionConfig = {
+            enabled:
+                data.enabled !== false,
+
+            apps:
+                data.apps &&
+                typeof data.apps === "object"
+                    ? data.apps
+                    : {}
+        };
+
+        protectionSetMasterUI();
+
+        await protectionRefresh();
+
+    } catch (error) {
+
+        console.error(
+            "Protection:",
+            error
+        );
+
+        protectionAppsElement.innerHTML =
+            `
+            <div class="protection-empty">
+                Could not load protection settings.
+            </div>
+            `;
+    }
+}
+
+
+function protectionGetUsageMap() {
+
+    const usageMap = {};
+
+    if (!Array.isArray(currentApps)) {
+        return usageMap;
+    }
+
+    for (const app of currentApps) {
+
+        const processName =
+            app.process_name ||
+            app.process ||
+            "";
+
+        if (!processName) {
+            continue;
+        }
+
+        const seconds =
+            Number(
+                app.seconds ||
+                app.duration_seconds ||
+                0
+            );
+
+        usageMap[
+            protectionNormalizeProcessName(
+                processName
+            )
+        ] =
+            seconds;
+    }
+
+    return usageMap;
+}
+
+
+function protectionRender(
+    usageMap = {}
+) {
+
+    const apps =
+        protectionConfig.apps || {};
+
+    const entries =
+        Object.entries(apps);
+
+    if (entries.length === 0) {
+
+        protectionAppsElement.innerHTML =
+            `
+            <div class="protection-empty">
+                No protected apps yet.
+            </div>
+            `;
+
+        return;
+    }
+
+
+    protectionAppsElement.innerHTML =
+        entries.map(
+            ([processName, config]) => {
+
+                const limitMinutes =
+                    Number(
+                        config.limit_minutes
+                    ) || 0;
+
+                const enabled =
+                    config.enabled !== false;
+
+                const usageSeconds =
+                    usageMap[
+                        protectionNormalizeProcessName(
+                            processName
+                        )
+                    ] || 0;
+
+                const limitSeconds =
+                    limitMinutes * 60;
+
+                const percent =
+                    limitSeconds > 0
+                        ? Math.min(
+                            100,
+                            Math.round(
+                                (
+                                    usageSeconds /
+                                    limitSeconds
+                                ) * 100
+                            )
+                        )
+                        : 0;
+
+                const usageText =
+                    protectionFormatTime(
+                        usageSeconds
+                    );
+
+                const limitText =
+                    protectionFormatTime(
+                        limitSeconds
+                    );
+
+                return `
+                    <div
+                        class="protection-app"
+                    >
+
+                        <div
+                            class="protection-app-top"
+                        >
+
+                            <div
+                                class="protection-app-name"
+                            >
+                                <div
+                                    class="protection-app-title"
+                                >
+                                    ${protectionEscape(
+                                        processName
+                                    )}
+                                </div>
+
+                                <div
+                                    class="protection-app-process"
+                                >
+                                    ${enabled
+                                        ? "Protected"
+                                        : "Protection disabled"}
+                                </div>
+                            </div>
+
+
+                            <div
+                                class="protection-app-usage"
+                            >
+                                ${usageText}
+                                /
+                                ${limitText}
+                            </div>
+
+
+                            <button
+                                class="
+                                    protection-app-toggle
+                                    ${enabled
+                                        ? "enabled"
+                                        : ""}
+                                "
+                                type="button"
+                                data-protection-action="toggle"
+                                data-process="${protectionEscape(
+                                    processName
+                                )}"
+                            >
+                                ${enabled
+                                    ? "ON"
+                                    : "OFF"}
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="protection-progress"
+                        >
+                            <div
+                                class="protection-progress-fill"
+                                style="width: ${percent}%"
+                            ></div>
+                        </div>
+
+
+                        <div
+                            class="protection-app-actions"
+                        >
+
+                            <input
+                                class="protection-edit-input"
+                                type="number"
+                                min="1"
+                                max="1440"
+                                value="${limitMinutes}"
+                                data-protection-limit="${protectionEscape(
+                                    processName
+                                )}"
+                            />
+
+                            <button
+                                class="protection-small-button"
+                                type="button"
+                                data-protection-action="save-limit"
+                                data-process="${protectionEscape(
+                                    processName
+                                )}"
+                            >
+                                Save
+                            </button>
+
+                            <button
+                                class="protection-small-button"
+                                type="button"
+                                data-protection-action="remove"
+                                data-process="${protectionEscape(
+                                    processName
+                                )}"
+                            >
+                                Remove
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+            }
+        ).join("");
+}
+
+
+async function protectionRefresh() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/apps/today"
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Could not load today's apps."
+            );
+        }
+
+        currentApps =
+            await response.json();
+
+        protectionRender(
+            protectionGetUsageMap()
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Protection usage:",
+            error
+        );
+
+        protectionRender({});
+    }
+}
+
+
+protectionMasterToggle.addEventListener(
+    "click",
+    async () => {
+
+        protectionConfig.enabled =
+            protectionConfig.enabled === false;
+
+        protectionSetMasterUI();
+
+        try {
+
+            await protectionSave();
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+            protectionConfig.enabled =
+                !protectionConfig.enabled;
+
+            protectionSetMasterUI();
+        }
+    }
+);
+
+
+protectionAddButton.addEventListener(
+    "click",
+    () => {
+
+        protectionAddForm.classList.toggle(
+            "open"
+        );
+
+        if (
+            protectionAddForm.classList.contains(
+                "open"
+            )
+        ) {
+            protectionProcessInput.focus();
+        }
+    }
+);
+
+
+protectionSaveButton.addEventListener(
+    "click",
+    async () => {
+
+        const processName =
+            protectionProcessInput.value.trim();
+
+        const limitMinutes =
+            Number(
+                protectionLimitInput.value
+            );
+
+        if (!processName) {
+            protectionProcessInput.focus();
+            return;
+        }
+
+        if (
+            !Number.isFinite(limitMinutes) ||
+            limitMinutes <= 0
+        ) {
+            protectionLimitInput.focus();
+            return;
+        }
+
+
+        const existing =
+            protectionGetAppConfig(
+                processName
+            );
+
+        if (existing) {
+
+            existing.config.limit_minutes =
+                limitMinutes;
+
+            existing.config.enabled =
+                true;
+
+        } else {
+
+            protectionConfig.apps[
+                processName
+            ] = {
+                enabled: true,
+                limit_minutes:
+                    limitMinutes
+            };
+        }
+
+
+        try {
+
+            await protectionSave();
+
+            protectionProcessInput.value =
+                "";
+
+            protectionLimitInput.value =
+                "";
+
+            protectionAddForm.classList.remove(
+                "open"
+            );
+
+            await protectionRefresh();
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+            alert(
+                "Could not save protection settings."
+            );
+        }
+    }
+);
+
+
+protectionAppsElement.addEventListener(
+    "click",
+    async event => {
+
+        const button =
+            event.target.closest(
+                "[data-protection-action]"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        const action =
+            button.dataset.protectionAction;
+
+        const processName =
+            button.dataset.process;
+
+        const existing =
+            protectionGetAppConfig(
+                processName
+            );
+
+        if (!existing) {
+            return;
+        }
+
+
+        if (action === "toggle") {
+
+            existing.config.enabled =
+                existing.config.enabled === false;
+
+            try {
+
+                await protectionSave();
+
+                await protectionRefresh();
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    "Could not save protection settings."
+                );
+            }
+
+            return;
+        }
+
+
+        if (action === "remove") {
+
+            delete protectionConfig.apps[
+                existing.key
+            ];
+
+            try {
+
+                await protectionSave();
+
+                await protectionRefresh();
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    "Could not save protection settings."
+                );
+            }
+
+            return;
+        }
+
+
+        if (action === "save-limit") {
+
+            const input =
+                protectionAppsElement.querySelector(
+                    `[data-protection-limit="${CSS.escape(
+                        processName
+                    )}"]`
+                );
+
+            if (!input) {
+                return;
+            }
+
+            const limitMinutes =
+                Number(
+                    input.value
+                );
+
+            if (
+                !Number.isFinite(
+                    limitMinutes
+                ) ||
+                limitMinutes <= 0
+            ) {
+                return;
+            }
+
+            existing.config.limit_minutes =
+                limitMinutes;
+
+            try {
+
+                await protectionSave();
+
+                await protectionRefresh();
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    "Could not save protection settings."
+                );
+            }
+        }
+    }
+);
+
+
+/*
+ * Keep Protection usage synchronized
+ * with the dashboard's normal refresh cycle.
+ */
+const originalLoadDataForProtection =
+    loadData;
+
+loadData = async function(
+    silent = false
+) {
+
+    await originalLoadDataForProtection(
+        silent
+    );
+
+    await protectionRefresh();
+};
+
+
+/*
+ * Load Protection once on startup.
+ */
+loadProtection();
 
 </script>
 

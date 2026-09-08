@@ -1,4 +1,9 @@
 {
     "enabled": true,
-    "apps": {}
+    "apps": {
+        "Telegram.exe": {
+            "enabled": true,
+            "limit_minutes": 28
+        }
+    }
 }

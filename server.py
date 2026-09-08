@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import datetime, date, timedelta
 import sqlite3
 import json
+import psutil
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
@@ -816,6 +817,29 @@ def get_history(start: str, end: str):
         "apps": apps,
     }
 
+
+# check
+@app.route("/api/protection/processes")
+def protection_processes():
+    processes = {}
+
+    for process in psutil.process_iter(["name"]):
+        try:
+            name = process.info.get("name")
+
+            if not name:
+                continue
+
+            processes[name.lower()] = name
+
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+
+    return jsonify({
+        "processes": sorted(processes.values(), key=str.lower)
+    })
+
+# end of check
 
 # ============================================================
 # API — protection
