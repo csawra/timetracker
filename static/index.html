@@ -78,6 +78,311 @@
         }
 
         /* =====================================================
+           GOALS & TASKS
+           ===================================================== */
+
+        .goals-card {
+            margin-bottom: 14px;
+        }
+
+        .goals-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .goals-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 650;
+            letter-spacing: -0.2px;
+        }
+
+        .goals-description {
+            margin: 5px 0 0;
+            color: var(--muted-dark);
+            font-size: 11px;
+        }
+
+        .goals-add-button {
+            flex-shrink: 0;
+
+            padding: 8px 12px;
+
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+
+            background: #171a20;
+            color: var(--text);
+
+            font-size: 12px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease;
+        }
+
+        .goals-add-button:hover {
+            background: #1d2128;
+            border-color: #383e47;
+        }
+
+        .goals-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 160px auto auto;
+            gap: 8px;
+
+            padding: 12px;
+
+            margin-bottom: 16px;
+
+            background: #0e1014;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+
+        .goals-form input {
+            width: 100%;
+
+            height: 34px;
+
+            padding: 0 10px;
+
+            background: #111419;
+            color: var(--text);
+
+            border: 1px solid var(--border);
+            border-radius: 7px;
+
+            outline: none;
+
+            font-size: 12px;
+        }
+
+        .goals-form input::placeholder {
+            color: var(--muted-dark);
+        }
+
+        .goals-form input:focus {
+            border-color: #414750;
+        }
+
+        .goals-form button {
+            height: 34px;
+
+            padding: 0 12px;
+
+            border: 1px solid var(--border);
+            border-radius: 7px;
+
+            background: #171a20;
+            color: var(--text);
+
+            font-size: 11px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .goals-form button:hover {
+            background: #1d2128;
+        }
+
+        .goals-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+
+            margin-bottom: 16px;
+        }
+
+        .goal-summary-stat {
+            padding: 12px 14px;
+
+            background: #0e1014;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+
+        .goal-summary-stat strong {
+            display: block;
+
+            font-size: 20px;
+            font-weight: 700;
+
+            line-height: 1.1;
+        }
+
+        .goal-summary-stat span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: var(--muted-dark);
+            font-size: 10px;
+        }
+
+        .goals-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .goal-row {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto auto;
+            align-items: center;
+            gap: 12px;
+
+            padding: 12px 0;
+
+            border-bottom: 1px solid #1a1d22;
+        }
+
+        .goal-row:last-child {
+            border-bottom: 0;
+        }
+
+        .goal-check {
+            width: 24px;
+            height: 24px;
+
+            padding: 0;
+
+            border: 1px solid #343941;
+            border-radius: 7px;
+
+            background: #111419;
+            color: transparent;
+
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition:
+                background 0.15s ease,
+                border-color 0.15s ease;
+        }
+
+        .goal-check:hover {
+            border-color: #555c66;
+        }
+
+        .goal-row.completed .goal-check {
+            background: #d9dde3;
+            border-color: #d9dde3;
+            color: #111419;
+        }
+
+        .goal-info {
+            min-width: 0;
+        }
+
+        .goal-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .goal-row.completed .goal-name {
+            color: var(--muted);
+            text-decoration: line-through;
+        }
+
+        .goal-progress {
+            margin-top: 7px;
+
+            height: 5px;
+
+            overflow: hidden;
+
+            background: #1b1f25;
+            border-radius: 999px;
+        }
+
+        .goal-progress-fill {
+            height: 100%;
+
+            background: #d9dde3;
+            border-radius: inherit;
+
+            transition: width 0.25s ease;
+        }
+
+        .goal-meta {
+            color: var(--muted-dark);
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .goal-delete {
+            padding: 5px 7px;
+
+            border: 0;
+            background: transparent;
+
+            color: var(--muted-dark);
+
+            font-size: 13px;
+
+            cursor: pointer;
+        }
+
+        .goal-delete:hover {
+            color: var(--text);
+        }
+
+        .goals-empty {
+            padding: 24px 0;
+
+            color: var(--muted-dark);
+            font-size: 12px;
+
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            .goals-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .goals-form {
+                grid-template-columns: 1fr;
+            }
+
+            .goals-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .goal-row {
+                grid-template-columns: auto minmax(0, 1fr) auto;
+            }
+
+            .goal-meta {
+                grid-column: 2 / 3;
+            }
+
+            .goal-delete {
+                grid-column: 3;
+                grid-row: 1;
+            }
+        }
+
+
+        /* =====================================================
            HEADER
            ===================================================== */
 
@@ -4587,6 +4892,401 @@ renderApps(
         },
         10000
     );
+
+        /* =====================================================
+           GOALS & TASKS
+           ===================================================== */
+
+        const DAILY_GOALS_STORAGE_KEY = "timetracker_daily_goals_v1";
+
+        function getDailyGoalsStorage() {
+            try {
+                const stored = localStorage.getItem(DAILY_GOALS_STORAGE_KEY);
+
+                if (!stored) {
+                    return {};
+                }
+
+                const parsed = JSON.parse(stored);
+
+                return parsed && typeof parsed === "object"
+                    ? parsed
+                    : {};
+            } catch (error) {
+                console.error("Failed to load daily goals:", error);
+                return {};
+            }
+        }
+
+
+        function saveDailyGoalsStorage(goalsByDate) {
+            try {
+                localStorage.setItem(
+                    DAILY_GOALS_STORAGE_KEY,
+                    JSON.stringify(goalsByDate)
+                );
+            } catch (error) {
+                console.error("Failed to save daily goals:", error);
+            }
+        }
+
+
+        function getGoalsDateKey() {
+            if (typeof selectedDate !== "undefined" && selectedDate) {
+                const year = selectedDate.getFullYear();
+                const month = String(
+                    selectedDate.getMonth() + 1
+                ).padStart(2, "0");
+                const day = String(
+                    selectedDate.getDate()
+                ).padStart(2, "0");
+
+                return `${year}-${month}-${day}`;
+            }
+
+            const now = new Date();
+
+            const year = now.getFullYear();
+            const month = String(
+                now.getMonth() + 1
+            ).padStart(2, "0");
+            const day = String(
+                now.getDate()
+            ).padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+        }
+
+
+        function getGoalsForCurrentDay() {
+            const allGoals = getDailyGoalsStorage();
+            const dateKey = getGoalsDateKey();
+
+            return Array.isArray(allGoals[dateKey])
+                ? allGoals[dateKey]
+                : [];
+        }
+
+
+        function saveGoalsForCurrentDay(goals) {
+            const allGoals = getDailyGoalsStorage();
+            const dateKey = getGoalsDateKey();
+
+            allGoals[dateKey] = goals;
+
+            saveDailyGoalsStorage(allGoals);
+        }
+
+
+        function renderGoals() {
+            const goalsList = document.getElementById("goalsList");
+            const completedCount =
+                document.getElementById("goalsCompletedCount");
+            const remainingCount =
+                document.getElementById("goalsRemainingCount");
+            const completionPercent =
+                document.getElementById("goalsCompletionPercent");
+
+            if (!goalsList) {
+                return;
+            }
+
+            const goals = getGoalsForCurrentDay();
+
+            const completed = goals.filter(
+                goal => goal.completed
+            ).length;
+
+            const remaining = goals.length - completed;
+
+            const percentage = goals.length
+                ? Math.round((completed / goals.length) * 100)
+                : 0;
+
+            if (completedCount) {
+                completedCount.textContent = completed;
+            }
+
+            if (remainingCount) {
+                remainingCount.textContent = remaining;
+            }
+
+            if (completionPercent) {
+                completionPercent.textContent =
+                    `${percentage}%`;
+            }
+
+            if (!goals.length) {
+                goalsList.innerHTML = `
+                    <div class="goals-empty">
+                        No goals for this day yet.
+                    </div>
+                `;
+
+                return;
+            }
+
+            goalsList.innerHTML = goals.map(goal => {
+                const minutes =
+                    Number(goal.minutes) || 0;
+
+                const targetText = minutes > 0
+                    ? `${minutes} min`
+                    : "No time target";
+
+                return `
+                    <div
+                        class="goal-row ${goal.completed ? "completed" : ""}"
+                        data-goal-id="${goal.id}"
+                    >
+
+                        <button
+                            class="goal-check"
+                            type="button"
+                            data-action="toggle"
+                            title="${goal.completed ? "Mark incomplete" : "Mark completed"}"
+                        >
+                            ✓
+                        </button>
+
+                        <div class="goal-info">
+
+                            <div class="goal-name">
+                                ${escapeHTML(goal.name)}
+                            </div>
+
+                            ${
+                                minutes > 0
+                                    ? `
+                                        <div class="goal-progress">
+                                            <div
+                                                class="goal-progress-fill"
+                                                style="width: ${goal.completed ? 100 : 0}%"
+                                            ></div>
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+                        <div class="goal-meta">
+                            ${targetText}
+                        </div>
+
+                        <button
+                            class="goal-delete"
+                            type="button"
+                            data-action="delete"
+                            title="Delete goal"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+                `;
+            }).join("");
+        }
+
+
+        function setupGoals() {
+            const addButton =
+                document.getElementById("addGoalButton");
+
+            const form =
+                document.getElementById("goalForm");
+
+            const nameInput =
+                document.getElementById("goalName");
+
+            const minutesInput =
+                document.getElementById("goalMinutes");
+
+            const saveButton =
+                document.getElementById("saveGoalButton");
+
+            const cancelButton =
+                document.getElementById("cancelGoalButton");
+
+            const goalsList =
+                document.getElementById("goalsList");
+
+
+            if (!addButton || !form || !nameInput ||
+                !minutesInput || !saveButton ||
+                !cancelButton || !goalsList) {
+                console.warn(
+                    "Goals UI elements were not found."
+                );
+
+                return;
+            }
+
+
+            addButton.addEventListener("click", () => {
+                form.style.display = "grid";
+
+                nameInput.focus();
+            });
+
+
+            cancelButton.addEventListener("click", () => {
+                form.style.display = "none";
+
+                nameInput.value = "";
+                minutesInput.value = "";
+            });
+
+
+            saveButton.addEventListener("click", () => {
+                const name =
+                    nameInput.value.trim();
+
+                const minutes =
+                    Number(minutesInput.value) || 0;
+
+
+                if (!name) {
+                    nameInput.focus();
+                    return;
+                }
+
+
+                if (
+                    minutes < 0 ||
+                    minutes > 1440
+                ) {
+                    minutesInput.focus();
+                    return;
+                }
+
+
+                const goals =
+                    getGoalsForCurrentDay();
+
+
+                goals.push({
+                    id:
+                        `${Date.now()}-${Math.random()
+                            .toString(36)
+                            .slice(2, 8)}`,
+
+                    name,
+
+                    minutes,
+
+                    completed: false
+                });
+
+
+                saveGoalsForCurrentDay(goals);
+
+
+                nameInput.value = "";
+                minutesInput.value = "";
+
+                form.style.display = "none";
+
+                renderGoals();
+            });
+
+
+            nameInput.addEventListener(
+                "keydown",
+                event => {
+                    if (event.key === "Enter") {
+                        saveButton.click();
+                    }
+                }
+            );
+
+
+            minutesInput.addEventListener(
+                "keydown",
+                event => {
+                    if (event.key === "Enter") {
+                        saveButton.click();
+                    }
+                }
+            );
+
+
+            goalsList.addEventListener(
+                "click",
+                event => {
+                    const button =
+                        event.target.closest(
+                            "[data-action]"
+                        );
+
+                    if (!button) {
+                        return;
+                    }
+
+
+                    const row =
+                        button.closest(".goal-row");
+
+                    if (!row) {
+                        return;
+                    }
+
+
+                    const goalId =
+                        row.dataset.goalId;
+
+                    const action =
+                        button.dataset.action;
+
+
+                    let goals =
+                        getGoalsForCurrentDay();
+
+
+                    if (action === "toggle") {
+                        goals = goals.map(goal => {
+                            if (
+                                String(goal.id) ===
+                                String(goalId)
+                            ) {
+                                return {
+                                    ...goal,
+                                    completed:
+                                        !goal.completed
+                                };
+                            }
+
+                            return goal;
+                        });
+
+                        saveGoalsForCurrentDay(goals);
+
+                        renderGoals();
+
+                        return;
+                    }
+
+
+                    if (action === "delete") {
+                        goals = goals.filter(
+                            goal =>
+                                String(goal.id) !==
+                                String(goalId)
+                        );
+
+                        saveGoalsForCurrentDay(goals);
+
+                        renderGoals();
+                    }
+                }
+            );
+
+
+            renderGoals();
+        }
+
+
+        setupGoals();
 
 </script>
 
