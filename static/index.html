@@ -81,6 +81,289 @@
            HEADER
            ===================================================== */
 
+/* ============================================================
+   HISTORICAL PATTERNS — VISUAL DASHBOARD
+   ============================================================ */
+
+.historical-patterns-card {
+    overflow: hidden;
+}
+
+.hp-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.hp-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.hp-stat {
+    padding: 18px;
+    border: 1px solid var(--border-color, rgba(128, 128, 128, 0.18));
+    border-radius: 14px;
+    background: var(--card-bg, rgba(128, 128, 128, 0.04));
+}
+
+.hp-stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.62;
+    margin-bottom: 7px;
+}
+
+.hp-stat-value {
+    font-size: 25px;
+    font-weight: 750;
+    line-height: 1.15;
+}
+
+.hp-stat-category {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hp-stat-sub {
+    margin-top: 5px;
+    font-size: 12px;
+    opacity: 0.55;
+}
+
+.hp-main-grid,
+.hp-bottom-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 18px;
+}
+
+.hp-panel {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid var(--border-color, rgba(128, 128, 128, 0.18));
+    border-radius: 16px;
+    background: var(--card-bg, rgba(128, 128, 128, 0.035));
+}
+
+.hp-panel-header {
+    margin-bottom: 20px;
+}
+
+.hp-panel-header h3,
+.hp-insight-panel h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.hp-panel-header p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    opacity: 0.58;
+}
+
+/* Activity chart */
+
+.hp-activity-chart {
+    height: 210px;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 4px 4px;
+}
+
+.hp-day-column {
+    flex: 1 0 28px;
+    min-width: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.hp-day-value {
+    height: 170px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.hp-day-bar {
+    width: min(26px, 75%);
+    min-height: 6px;
+    border-radius: 7px 7px 3px 3px;
+    background: var(--accent-color, currentColor);
+    opacity: 0.78;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.hp-day-bar:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.hp-day-label {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 10px;
+    opacity: 0.55;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Categories */
+
+.hp-category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.hp-category-row {
+    min-width: 0;
+}
+
+.hp-category-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 7px;
+}
+
+.hp-category-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.hp-category-time {
+    flex-shrink: 0;
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.hp-category-percent {
+    margin-left: 5px;
+    opacity: 0.5;
+}
+
+.hp-category-track,
+.hp-recent-track {
+    height: 7px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--border-color, rgba(128, 128, 128, 0.16));
+}
+
+.hp-category-fill,
+.hp-recent-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent-color, currentColor);
+    opacity: 0.78;
+}
+
+/* Active days */
+
+.hp-recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.hp-recent-row {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.hp-recent-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.hp-recent-info strong {
+    font-weight: 650;
+}
+
+/* Insight */
+
+.hp-insight-panel {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.hp-insight-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--border-color, rgba(128, 128, 128, 0.12));
+    font-size: 21px;
+}
+
+.hp-insight-text {
+    margin: 9px 0 0;
+    font-size: 14px;
+    line-height: 1.55;
+    opacity: 0.78;
+}
+
+.hp-insight-extra {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color, rgba(128, 128, 128, 0.14));
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.hp-empty {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 13px;
+    opacity: 0.5;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .hp-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hp-main-grid,
+    .hp-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .hp-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hp-panel {
+        padding: 15px;
+    }
+}
+
         header {
             display: flex;
             justify-content: space-between;
@@ -3122,18 +3405,500 @@
        APPLICATIONS
        ======================================================== */
 
-    
-    function renderHistoricalPatterns(data) {
-        const container = document.getElementById("historicalPatternsContent");
+       function renderHistoricalPatterns(data) {
+    const container = document.getElementById("historicalPatternsContent");
 
-        if (!container) {
-            return;
+    if (!container) {
+        return;
+    }
+
+    const apps = Array.isArray(data.apps) ? data.apps : [];
+
+    // ------------------------------------------------------------
+    // Helpers
+    // ------------------------------------------------------------
+
+    function formatTime(seconds) {
+        seconds = Math.max(0, Math.round(Number(seconds) || 0));
+
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+
+        if (hours > 0) {
+            return `${hours}h ${minutes}m`;
         }
 
-        if (!data) {
-            container.innerHTML = '<div class="empty">No historical data yet.</div>';
-            return;
+        if (minutes > 0) {
+            return `${minutes}m`;
         }
+
+        return `${seconds}s`;
+    }
+
+    function formatShortTime(seconds) {
+        seconds = Math.max(0, Math.round(Number(seconds) || 0));
+
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+
+        if (hours > 0) {
+            return `${hours}h ${minutes}m`;
+        }
+
+        if (minutes > 0) {
+            return `${minutes}m`;
+        }
+
+        return `${seconds}s`;
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function getSeconds(item) {
+        if (!item) {
+            return 0;
+        }
+
+        return Number(
+            item.seconds ??
+            item.total_seconds ??
+            item.duration_seconds ??
+            item.duration ??
+            0
+        ) || 0;
+    }
+
+    function getLabel(item) {
+        return (
+            item.date ??
+            item.day ??
+            item.label ??
+            item.name ??
+            item.period ??
+            ""
+        );
+    }
+
+    function getDailyData() {
+        if (Array.isArray(data.daily) && data.daily.length > 0) {
+            return data.daily
+                .map(item => ({
+                    label: getLabel(item),
+                    seconds: getSeconds(item)
+                }))
+                .filter(item => item.seconds > 0);
+        }
+
+        // /api/day gives us one day's total instead of a daily array.
+        const total = Number(data.total_seconds || 0);
+
+        if (total > 0) {
+            return [{
+                label: "Today",
+                seconds: total
+            }];
+        }
+
+        return [];
+    }
+
+    function getCategoryTotals() {
+        const totals = {};
+
+        apps.forEach(app => {
+            const name =
+                app.app ??
+                app.name ??
+                app.process ??
+                app.application ??
+                "Other";
+
+            const seconds = getSeconds(app);
+
+            if (seconds <= 0) {
+                return;
+            }
+
+            totals[name] = (totals[name] || 0) + seconds;
+        });
+
+        return Object.entries(totals)
+            .map(([name, seconds]) => ({
+                name,
+                seconds
+            }))
+            .sort((a, b) => b.seconds - a.seconds);
+    }
+
+    // ------------------------------------------------------------
+    // Data
+    // ------------------------------------------------------------
+
+    const daily = getDailyData();
+    const categories = getCategoryTotals();
+
+    const trackedSeconds =
+        Number(data.total_seconds || 0) ||
+        daily.reduce((sum, item) => sum + item.seconds, 0);
+
+    const activeDays = daily.filter(
+        item => item.seconds > 0
+    ).length;
+
+    const averageDay =
+        activeDays > 0
+            ? trackedSeconds / activeDays
+            : 0;
+
+    const topCategory = categories.length
+        ? categories[0]
+        : null;
+
+    const creativeSeconds = categories
+        .filter(item => {
+            const name = item.name.toLowerCase();
+
+            return (
+                name.includes("paint") ||
+                name.includes("photoshop") ||
+                name.includes("illustrator") ||
+                name.includes("krita") ||
+                name.includes("clip studio") ||
+                name.includes("drawing") ||
+                name.includes("gimp") ||
+                name.includes("blender")
+            );
+        })
+        .reduce((sum, item) => sum + item.seconds, 0);
+
+    // ------------------------------------------------------------
+    // Activity bars
+    // ------------------------------------------------------------
+
+    const maxDaySeconds = daily.length
+        ? Math.max(...daily.map(item => item.seconds))
+        : 0;
+
+    let activityHtml = "";
+
+    if (daily.length === 0) {
+        activityHtml = `
+            <div class="hp-empty">
+                No tracked activity in this period.
+            </div>
+        `;
+    } else {
+        activityHtml = `
+            <div class="hp-activity-chart">
+                ${daily.map(item => {
+                    const height = maxDaySeconds > 0
+                        ? Math.max(
+                            6,
+                            (item.seconds / maxDaySeconds) * 100
+                        )
+                        : 6;
+
+                    return `
+                        <div class="hp-day-column">
+                            <div
+                                class="hp-day-value"
+                                title="${escapeHtml(item.label)} — ${formatTime(item.seconds)}"
+                            >
+                                <div
+                                    class="hp-day-bar"
+                                    style="height:${height}%"
+                                ></div>
+                            </div>
+
+                            <div class="hp-day-label">
+                                ${escapeHtml(item.label)}
+                            </div>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+        `;
+    }
+
+    // ------------------------------------------------------------
+    // Category bars
+    // ------------------------------------------------------------
+
+    let categoryHtml = "";
+
+    if (categories.length === 0) {
+        categoryHtml = `
+            <div class="hp-empty">
+                No categories with tracked time.
+            </div>
+        `;
+    } else {
+        const maxCategorySeconds = categories[0].seconds;
+
+        categoryHtml = `
+            <div class="hp-category-list">
+                ${categories.slice(0, 8).map(item => {
+                    const percentage = trackedSeconds > 0
+                        ? Math.round(
+                            (item.seconds / trackedSeconds) * 100
+                        )
+                        : 0;
+
+                    const width = maxCategorySeconds > 0
+                        ? (item.seconds / maxCategorySeconds) * 100
+                        : 0;
+
+                    return `
+                        <div class="hp-category-row">
+                            <div class="hp-category-top">
+                                <span class="hp-category-name">
+                                    ${escapeHtml(item.name)}
+                                </span>
+
+                                <span class="hp-category-time">
+                                    ${formatTime(item.seconds)}
+                                    <span class="hp-category-percent">
+                                        ${percentage}%
+                                    </span>
+                                </span>
+                            </div>
+
+                            <div class="hp-category-track">
+                                <div
+                                    class="hp-category-fill"
+                                    style="width:${width}%"
+                                ></div>
+                            </div>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+        `;
+    }
+
+    // ------------------------------------------------------------
+    // Most active days
+    // ------------------------------------------------------------
+
+    const mostActiveDays = [...daily]
+        .sort((a, b) => b.seconds - a.seconds)
+        .slice(0, 5);
+
+    let activeDaysHtml = "";
+
+    if (mostActiveDays.length === 0) {
+        activeDaysHtml = `
+            <div class="hp-empty">
+                No active days yet.
+            </div>
+        `;
+    } else {
+        const maxActiveSeconds =
+            mostActiveDays[0].seconds;
+
+        activeDaysHtml = `
+            <div class="hp-recent-list">
+                ${mostActiveDays.map(item => {
+                    const width = maxActiveSeconds > 0
+                        ? (item.seconds / maxActiveSeconds) * 100
+                        : 0;
+
+                    return `
+                        <div class="hp-recent-row">
+                            <div class="hp-recent-info">
+                                <span>
+                                    ${escapeHtml(item.label)}
+                                </span>
+
+                                <strong>
+                                    ${formatShortTime(item.seconds)}
+                                </strong>
+                            </div>
+
+                            <div class="hp-recent-track">
+                                <div
+                                    class="hp-recent-fill"
+                                    style="width:${width}%"
+                                ></div>
+                            </div>
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+        `;
+    }
+
+    // ------------------------------------------------------------
+    // Insight
+    // ------------------------------------------------------------
+
+    let insight = "Not enough tracked data yet.";
+
+    if (trackedSeconds > 0 && topCategory) {
+        const percentage = Math.round(
+            (topCategory.seconds / trackedSeconds) * 100
+        );
+
+        if (percentage >= 60) {
+            insight =
+                `Most of your tracked time is concentrated in ${topCategory.name}, at ${percentage}% of the selected period.`;
+        } else if (categories.length >= 4) {
+            insight =
+                `Your time is spread across ${categories.length} categories, with ${topCategory.name} taking the largest share at ${percentage}%.`;
+        } else {
+            insight =
+                `${topCategory.name} is your largest tracked category at ${percentage}% of the selected period.`;
+        }
+    }
+
+    // ------------------------------------------------------------
+    // Render
+    // ------------------------------------------------------------
+
+    container.innerHTML = `
+        <div class="hp-dashboard">
+
+            <div class="hp-summary-grid">
+
+                <div class="hp-stat">
+                    <div class="hp-stat-label">
+                        Tracked time
+                    </div>
+
+                    <div class="hp-stat-value">
+                        ${formatTime(trackedSeconds)}
+                    </div>
+
+                    <div class="hp-stat-sub">
+                        across the selected period
+                    </div>
+                </div>
+
+                <div class="hp-stat">
+                    <div class="hp-stat-label">
+                        Active days
+                    </div>
+
+                    <div class="hp-stat-value">
+                        ${activeDays}
+                    </div>
+
+                    <div class="hp-stat-sub">
+                        ${activeDays === 1 ? "active day" : "active days"}
+                    </div>
+                </div>
+
+                <div class="hp-stat">
+                    <div class="hp-stat-label">
+                        Average active day
+                    </div>
+
+                    <div class="hp-stat-value">
+                        ${formatTime(averageDay)}
+                    </div>
+
+                    <div class="hp-stat-sub">
+                        per active day
+                    </div>
+                </div>
+
+                <div class="hp-stat">
+                    <div class="hp-stat-label">
+                        Top category
+                    </div>
+
+                    <div class="hp-stat-value hp-stat-category">
+                        ${topCategory
+                            ? escapeHtml(topCategory.name)
+                            : "—"}
+                    </div>
+
+                    <div class="hp-stat-sub">
+                        ${categories.length}
+                        ${categories.length === 1 ? "category" : "categories"}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="hp-main-grid">
+
+                <div class="hp-panel hp-activity-panel">
+                    <div class="hp-panel-header">
+                        <div>
+                            <h3>Activity over time</h3>
+                            <p>Your tracked activity across the selected period.</p>
+                        </div>
+                    </div>
+
+                    ${activityHtml}
+                </div>
+
+                <div class="hp-panel">
+                    <div class="hp-panel-header">
+                        <div>
+                            <h3>Where your time went</h3>
+                            <p>Categories ranked by tracked time.</p>
+                        </div>
+                    </div>
+
+                    ${categoryHtml}
+                </div>
+
+            </div>
+
+            <div class="hp-bottom-grid">
+
+                <div class="hp-panel">
+                    <div class="hp-panel-header">
+                        <div>
+                            <h3>Most active days</h3>
+                            <p>Your biggest tracked days in this period.</p>
+                        </div>
+                    </div>
+
+                    ${activeDaysHtml}
+                </div>
+
+                <div class="hp-panel hp-insight-panel">
+                    <div class="hp-insight-icon">
+                        🧠
+                    </div>
+
+                    <div>
+                        <h3>Pattern</h3>
+
+                        <p class="hp-insight-text">
+                            ${escapeHtml(insight)}
+                        </p>
+
+                        ${
+                            creativeSeconds > 0
+                                ? `
+                                    <div class="hp-insight-extra">
+                                        🎨 Creative apps:
+                                        <strong>
+                                            ${formatTime(creativeSeconds)}
+                                        </strong>
+                                    </div>
+                                `
+                                : ""
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
 
         const totalSeconds = Number(data.total_seconds || 0);
         const apps = data.apps || [];
@@ -3335,7 +4100,7 @@
                 ${recentHtml}
             </div>
         `;
-    }
+    };
 
 
     function renderApps(
