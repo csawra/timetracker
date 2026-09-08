@@ -712,7 +712,120 @@
             border-color: #414750;
         }
 
+        
         /* =====================================================
+           PATTERNS
+           ===================================================== */
+
+        .patterns-card {
+            margin-bottom: 14px;
+        }
+
+        .patterns-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .patterns-header-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .patterns-header-description {
+            margin: 5px 0 0;
+            color: var(--muted-dark);
+            font-size: 11px;
+        }
+
+        .patterns-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .pattern-box {
+            padding: 14px;
+            background: #0e1014;
+            border: 1px solid #1c2026;
+            border-radius: 9px;
+        }
+
+        .pattern-label {
+            color: var(--muted-dark);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .pattern-value {
+            margin-top: 7px;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .pattern-subtitle {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .pattern-top-list {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pattern-top-row {
+            display: grid;
+            grid-template-columns: 24px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pattern-rank {
+            color: var(--muted-dark);
+            font-size: 10px;
+        }
+
+        .pattern-category-name {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+        }
+
+        .pattern-category-time {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .pattern-bar-track {
+            height: 4px;
+            margin-top: 4px;
+            background: #1c2026;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .pattern-bar-fill {
+            height: 100%;
+            background: #d9dde3;
+            border-radius: 999px;
+        }
+
+        @media (max-width: 760px) {
+            .patterns-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+/* =====================================================
            APPLICATION LIST
            ===================================================== */
 
@@ -1117,7 +1230,36 @@
         </section>
 
 
+        
         <!-- =================================================
+             PATTERNS
+             ================================================= -->
+
+        <section class="card patterns-card">
+
+            <div class="patterns-header">
+
+                <div>
+                    <h2 class="patterns-header-title">
+                        Patterns
+                    </h2>
+
+                    <p class="patterns-header-description">
+                        What your usage is actually leaning toward.
+                    </p>
+                </div>
+
+            </div>
+
+            <div id="patternsContent">
+                <div class="loading">
+                    Loading...
+                </div>
+            </div>
+
+        </section>
+
+<!-- =================================================
              APPLICATION LIST
              ================================================= -->
 
@@ -2729,7 +2871,236 @@
     }
 
 
+    
     /* ========================================================
+       PATTERNS
+       ======================================================== */
+
+    function renderPatterns(apps) {
+
+        const container =
+            document.getElementById("patternsContent");
+
+        if (!container) {
+            return;
+        }
+
+        if (!apps || apps.length === 0) {
+            container.innerHTML =
+                '<div class="empty">Not enough data for patterns yet.</div>';
+            return;
+        }
+
+        const categoryTotals = {};
+
+        apps.forEach(app => {
+
+            const category =
+                getAppCategory(app);
+
+            const seconds =
+                Number(app.seconds || 0);
+
+            categoryTotals[category] =
+                (categoryTotals[category] || 0) +
+                seconds;
+        });
+
+        const categories =
+            Object.entries(categoryTotals)
+                .map(([key, seconds]) => ({
+                    key,
+                    seconds,
+                    info:
+                        CATEGORIES[key] ||
+                        CATEGORIES.other
+                }))
+                .sort(
+                    (a, b) =>
+                        b.seconds - a.seconds
+                );
+
+        const totalSeconds =
+            categories.reduce(
+                (sum, category) =>
+                    sum + category.seconds,
+                0
+            );
+
+        if (totalSeconds <= 0) {
+            container.innerHTML =
+                '<div class="empty">Not enough data for patterns yet.</div>';
+            return;
+        }
+
+        const creativeCategories = new Set([
+            "drawing",
+            "montage",
+            "coding",
+            "music",
+            "writing"
+        ]);
+
+        const creativeSeconds =
+            categories
+                .filter(category =>
+                    creativeCategories.has(
+                        category.key
+                    )
+                )
+                .reduce(
+                    (sum, category) =>
+                        sum + category.seconds,
+                    0
+                );
+
+        const dominant = categories[0];
+
+        const dominantPercentage =
+            dominant.seconds /
+            totalSeconds *
+            100;
+
+        const creativePercentage =
+            creativeSeconds /
+            totalSeconds *
+            100;
+
+        let concentrationText;
+
+        if (dominantPercentage >= 70) {
+            concentrationText = "Very focused";
+        } else if (dominantPercentage >= 45) {
+            concentrationText = "Mostly focused";
+        } else if (dominantPercentage >= 30) {
+            concentrationText = "Fairly balanced";
+        } else {
+            concentrationText = "Widely spread";
+        }
+
+        container.innerHTML = "";
+
+        const grid =
+            document.createElement("div");
+
+        grid.className =
+            "patterns-grid";
+
+        grid.innerHTML = `
+
+            <div class="pattern-box">
+
+                <div class="pattern-label">
+                    Dominant
+                </div>
+
+                <div class="pattern-value">
+                    ${dominant.info.icon}
+                    ${escapeHTML(dominant.info.name)}
+                </div>
+
+                <div class="pattern-subtitle">
+                    ${dominantPercentage.toFixed(0)}%
+                    of tracked usage
+                </div>
+
+            </div>
+
+            <div class="pattern-box">
+
+                <div class="pattern-label">
+                    Creative time
+                </div>
+
+                <div class="pattern-value">
+                    ${formatSeconds(creativeSeconds)}
+                </div>
+
+                <div class="pattern-subtitle">
+                    ${creativePercentage.toFixed(0)}%
+                    of tracked usage
+                </div>
+
+            </div>
+
+            <div class="pattern-box">
+
+                <div class="pattern-label">
+                    Category spread
+                </div>
+
+                <div class="pattern-value">
+                    ${concentrationText}
+                </div>
+
+                <div class="pattern-subtitle">
+                    ${categories.length}
+                    categories detected
+                </div>
+
+            </div>
+
+        `;
+
+        container.appendChild(grid);
+
+        const topList =
+            document.createElement("div");
+
+        topList.className =
+            "pattern-top-list";
+
+        categories
+            .slice(0, 3)
+            .forEach((category, index) => {
+
+                const percentage =
+                    category.seconds /
+                    totalSeconds *
+                    100;
+
+                const row =
+                    document.createElement("div");
+
+                row.className =
+                    "pattern-top-row";
+
+                row.innerHTML = `
+
+                    <div class="pattern-rank">
+                        #${index + 1}
+                    </div>
+
+                    <div>
+
+                        <div class="pattern-category-name">
+                            ${category.info.icon}
+                            ${escapeHTML(category.info.name)}
+                        </div>
+
+                        <div class="pattern-bar-track">
+                            <div
+                                class="pattern-bar-fill"
+                                style="width: ${percentage}%"
+                            ></div>
+                        </div>
+
+                    </div>
+
+                    <div class="pattern-category-time">
+                        ${formatSeconds(category.seconds)}
+                    </div>
+
+                `;
+
+                topList.appendChild(row);
+            });
+
+        container.appendChild(topList);
+    }
+
+
+/* ========================================================
        APPLICATIONS
        ======================================================== */
 
@@ -2950,6 +3321,10 @@
         );
 
         renderCategoryEditor(
+            apps
+        );
+
+        renderPatterns(
             apps
         );
     }
