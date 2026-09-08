@@ -3341,13 +3341,6 @@
     function renderApps(
         apps
     ) {
-        if (window.__timeTrackerCurrentData) {
-            renderHistoricalPatterns(
-                window.__timeTrackerCurrentData
-            );
-        }
-
-
         appsSummary.innerHTML =
             "";
 
@@ -3701,13 +3694,15 @@ renderApps(
                 graphMeta.textContent =
                     "7 days";
 
-                renderDailyGraph(
-                    data.daily || []
-                );
+renderDailyGraph(
+    data.daily || []
+);
 
-                renderApps(
-                    data.apps || []
-                );
+renderHistoricalPatterns(data);
+
+renderApps(
+    data.apps || []
+);
 
                 totalSubtitle.textContent =
                     `${formatDate(
@@ -3763,13 +3758,15 @@ renderApps(
                 graphMeta.textContent =
                     "Daily totals";
 
-                renderDailyGraph(
-                    data.daily || []
-                );
+renderDailyGraph(
+    data.daily || []
+);
 
-                renderApps(
-                    data.apps || []
-                );
+renderHistoricalPatterns(data);
+
+renderApps(
+    data.apps || []
+);
 
                 totalSubtitle.textContent =
                     `${formatDate(
@@ -3879,14 +3876,15 @@ renderApps(
                     : "Weekly totals";
 
 
-            renderLongRangeGraph(
-                data
-            );
+renderLongRangeGraph(
+    data
+);
 
+renderHistoricalPatterns(data);
 
-            renderApps(
-                data.apps || []
-            );
+renderApps(
+    data.apps || []
+);
 
 
             totalSubtitle.textContent =
