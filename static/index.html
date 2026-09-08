@@ -132,19 +132,22 @@
             border-color: #383e47;
         }
 
-        .goals-form {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 160px auto auto;
-            gap: 8px;
+.goals-form {
+    display: none;
+    grid-template-columns: minmax(0, 1fr) 160px auto auto;
+    gap: 8px;
 
-            padding: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
 
-            margin-bottom: 16px;
+    background: #0e1014;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
 
-            background: #0e1014;
-            border: 1px solid var(--border);
-            border-radius: 9px;
-        }
+.goals-form.is-open {
+    display: grid;
+}
 
         .goals-form input {
             width: 100%;
@@ -4897,396 +4900,884 @@ renderApps(
            GOALS & TASKS
            ===================================================== */
 
-        const DAILY_GOALS_STORAGE_KEY = "timetracker_daily_goals_v1";
+    /* =====================================================
+   GOALS & TASKS
+   ===================================================== */
 
-        function getDailyGoalsStorage() {
-            try {
-                const stored = localStorage.getItem(DAILY_GOALS_STORAGE_KEY);
+const GOALS_STORAGE_KEY = "timetracker_daily_goals_v2";
 
-                if (!stored) {
-                    return {};
-                }
+function getGoalsStorage() {
+    try {
+        const stored = localStorage.getItem(GOALS_STORAGE_KEY);
 
-                const parsed = JSON.parse(stored);
-
-                return parsed && typeof parsed === "object"
-                    ? parsed
-                    : {};
-            } catch (error) {
-                console.error("Failed to load daily goals:", error);
-                return {};
-            }
+        if (!stored) {
+            return {};
         }
 
+        const parsed = JSON.parse(stored);
 
-        function saveDailyGoalsStorage(goalsByDate) {
-            try {
-                localStorage.setItem(
-                    DAILY_GOALS_STORAGE_KEY,
-                    JSON.stringify(goalsByDate)
+        return parsed && typeof parsed === "object"
+            ? parsed
+            : {};
+    } catch (error) {
+        console.error("Failed to load goals:", error);
+        return {};
+    }
+}
+
+function saveGoalsStorage(goalsByDate) {
+    try {
+        localStorage.setItem(
+            GOALS_STORAGE_KEY,
+            JSON.stringify(goalsByDate)
+        );
+    } catch (error) {
+        console.error("Failed to save goals:", error);
+    }
+}
+
+function getGoalsDateKey() {
+    if (selectedDate) {
+        const year = selectedDate.getFullYear();
+        const month = String(
+            selectedDate.getMonth() + 1
+        ).padStart(2, "0");
+
+        const day = String(
+            selectedDate.getDate()
+        ).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+    const now = new Date();
+
+    return [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getDate()).padStart(2, "0")
+    ].join("-");
+}
+
+function getGoalsForCurrentDay() {
+    const storage = getGoalsStorage();
+    const dateKey = getGoalsDateKey();
+
+    return Array.isArray(storage[dateKey])
+        ? storage[dateKey]
+        : [];
+}
+
+function saveGoalsForCurrentDay(goals) {
+    const storage = getGoalsStorage();
+    const dateKey = getGoalsDateKey();
+
+    storage[dateKey] = goals;
+
+    saveGoalsStorage(storage);
+}
+
+function getGoalCategorySeconds(apps, category) {
+    if (!Array.isArray(apps)) {
+        return 0;
+    }
+
+    return apps.reduce(
+        (total, app) => {
+            if (
+                getAppCategory(app) === category
+            ) {
+                return total + Number(
+                    app.seconds || 0
                 );
-            } catch (error) {
-                console.error("Failed to save daily goals:", error);
             }
+
+            return total;
+        },
+        0
+    );
+}
+
+function formatGoalMinutes(seconds) {
+    const minutes = Math.floor(
+        Math.max(0, Number(seconds) || 0) / 60
+    );
+
+    return `${minutes} min`;
+}
+
+function updateTrackedGoals(apps) {
+    /*
+     * Time goals only use daily data.
+     * Do not accidentally count an entire week/month
+     * toward a daily goal.
+     */
+    if (currentRange !== "day") {
+        return;
+    }
+
+    const goals = getGoalsForCurrentDay();
+
+    if (!goals.length) {
+        return;
+    }
+
+    let changed = false;
+
+    const updatedGoals = goals.map(goal => {
+        if (
+            goal.type !== "time" ||
+            !goal.category ||
+            !goal.minutes
+        ) {
+            return goal;
         }
 
+        const trackedSeconds =
+            getGoalCategorySeconds(
+                apps,
+                goal.category
+            );
 
-        function getGoalsDateKey() {
-            if (typeof selectedDate !== "undefined" && selectedDate) {
-                const year = selectedDate.getFullYear();
-                const month = String(
-                    selectedDate.getMonth() + 1
-                ).padStart(2, "0");
-                const day = String(
-                    selectedDate.getDate()
-                ).padStart(2, "0");
+        const targetSeconds =
+            Number(goal.minutes) * 60;
 
-                return `${year}-${month}-${day}`;
-            }
+        const progressSeconds =
+            Math.min(
+                trackedSeconds,
+                targetSeconds
+            );
 
-            const now = new Date();
+        const completed =
+            progressSeconds >= targetSeconds;
 
-            const year = now.getFullYear();
-            const month = String(
-                now.getMonth() + 1
-            ).padStart(2, "0");
-            const day = String(
-                now.getDate()
-            ).padStart(2, "0");
-
-            return `${year}-${month}-${day}`;
+        if (
+            goal.progressSeconds !==
+                progressSeconds ||
+            goal.completed !== completed
+        ) {
+            changed = true;
         }
 
+        return {
+            ...goal,
+            progressSeconds,
+            completed
+        };
+    });
 
-        function getGoalsForCurrentDay() {
-            const allGoals = getDailyGoalsStorage();
-            const dateKey = getGoalsDateKey();
+    if (changed) {
+        saveGoalsForCurrentDay(
+            updatedGoals
+        );
+    }
+}
 
-            return Array.isArray(allGoals[dateKey])
-                ? allGoals[dateKey]
-                : [];
-        }
+function renderGoals(apps = null) {
+    const goalsList =
+        document.getElementById("goalsList");
 
+    const completedCount =
+        document.getElementById(
+            "goalsCompletedCount"
+        );
 
-        function saveGoalsForCurrentDay(goals) {
-            const allGoals = getDailyGoalsStorage();
-            const dateKey = getGoalsDateKey();
+    const remainingCount =
+        document.getElementById(
+            "goalsRemainingCount"
+        );
 
-            allGoals[dateKey] = goals;
+    const completionPercent =
+        document.getElementById(
+            "goalsCompletionPercent"
+        );
 
-            saveDailyGoalsStorage(allGoals);
-        }
+    if (!goalsList) {
+        return;
+    }
 
+    /*
+     * Update automatic goals only when we have
+     * fresh daily application data.
+     */
+    if (
+        Array.isArray(apps) &&
+        currentRange === "day"
+    ) {
+        updateTrackedGoals(apps);
+    }
 
-        function renderGoals() {
-            const goalsList = document.getElementById("goalsList");
-            const completedCount =
-                document.getElementById("goalsCompletedCount");
-            const remainingCount =
-                document.getElementById("goalsRemainingCount");
-            const completionPercent =
-                document.getElementById("goalsCompletionPercent");
+    const goals =
+        getGoalsForCurrentDay();
 
-            if (!goalsList) {
-                return;
+    const completed =
+        goals.filter(
+            goal => goal.completed
+        ).length;
+
+    const remaining =
+        goals.length - completed;
+
+    const percentage =
+        goals.length > 0
+            ? Math.round(
+                (completed /
+                    goals.length) *
+                    100
+            )
+            : 0;
+
+    if (completedCount) {
+        completedCount.textContent =
+            completed;
+    }
+
+    if (remainingCount) {
+        remainingCount.textContent =
+            remaining;
+    }
+
+    if (completionPercent) {
+        completionPercent.textContent =
+            `${percentage}%`;
+    }
+
+    if (!goals.length) {
+        goalsList.innerHTML = `
+            <div class="goals-empty">
+                No goals for this day yet.
+            </div>
+        `;
+
+        return;
+    }
+
+    goalsList.innerHTML =
+        goals.map(goal => {
+            const isTimeGoal =
+                goal.type === "time";
+
+            const categoryInfo =
+                CATEGORIES[
+                    goal.category
+                ] || CATEGORIES.other;
+
+            let progressSeconds =
+                Number(
+                    goal.progressSeconds
+                ) || 0;
+
+            const targetSeconds =
+                Number(goal.minutes || 0) *
+                60;
+
+            if (
+                isTimeGoal &&
+                targetSeconds > 0
+            ) {
+                progressSeconds =
+                    Math.min(
+                        progressSeconds,
+                        targetSeconds
+                    );
             }
 
-            const goals = getGoalsForCurrentDay();
+            const progressPercent =
+                isTimeGoal &&
+                targetSeconds > 0
+                    ? Math.min(
+                        100,
+                        Math.round(
+                            (
+                                progressSeconds /
+                                targetSeconds
+                            ) * 100
+                        )
+                    )
+                    : 0;
 
-            const completed = goals.filter(
-                goal => goal.completed
-            ).length;
+            const typeText =
+                isTimeGoal
+                    ? `${categoryInfo.icon} ${categoryInfo.name}`
+                    : "Manual task";
 
-            const remaining = goals.length - completed;
+            const metaText =
+                isTimeGoal
+                    ? `${formatGoalMinutes(
+                        progressSeconds
+                    )} / ${goal.minutes} min`
+                    : typeText;
 
-            const percentage = goals.length
-                ? Math.round((completed / goals.length) * 100)
-                : 0;
+            return `
+                <div
+                    class="goal-row ${
+                        goal.completed
+                            ? "completed"
+                            : ""
+                    }"
+                    data-goal-id="${escapeHTML(
+                        goal.id
+                    )}"
+                >
 
-            if (completedCount) {
-                completedCount.textContent = completed;
-            }
-
-            if (remainingCount) {
-                remainingCount.textContent = remaining;
-            }
-
-            if (completionPercent) {
-                completionPercent.textContent =
-                    `${percentage}%`;
-            }
-
-            if (!goals.length) {
-                goalsList.innerHTML = `
-                    <div class="goals-empty">
-                        No goals for this day yet.
-                    </div>
-                `;
-
-                return;
-            }
-
-            goalsList.innerHTML = goals.map(goal => {
-                const minutes =
-                    Number(goal.minutes) || 0;
-
-                const targetText = minutes > 0
-                    ? `${minutes} min`
-                    : "No time target";
-
-                return `
-                    <div
-                        class="goal-row ${goal.completed ? "completed" : ""}"
-                        data-goal-id="${goal.id}"
+                    <button
+                        class="goal-check"
+                        type="button"
+                        data-action="toggle"
+                        title="${
+                            goal.completed
+                                ? "Mark incomplete"
+                                : "Mark completed"
+                        }"
                     >
+                        ✓
+                    </button>
 
-                        <button
-                            class="goal-check"
-                            type="button"
-                            data-action="toggle"
-                            title="${goal.completed ? "Mark incomplete" : "Mark completed"}"
-                        >
-                            ✓
-                        </button>
+                    <div class="goal-info">
 
-                        <div class="goal-info">
-
-                            <div class="goal-name">
-                                ${escapeHTML(goal.name)}
-                            </div>
-
-                            ${
-                                minutes > 0
-                                    ? `
-                                        <div class="goal-progress">
-                                            <div
-                                                class="goal-progress-fill"
-                                                style="width: ${goal.completed ? 100 : 0}%"
-                                            ></div>
-                                        </div>
-                                    `
-                                    : ""
-                            }
-
+                        <div class="goal-name">
+                            ${escapeHTML(
+                                goal.name
+                            )}
                         </div>
 
-                        <div class="goal-meta">
-                            ${targetText}
-                        </div>
-
-                        <button
-                            class="goal-delete"
-                            type="button"
-                            data-action="delete"
-                            title="Delete goal"
-                        >
-                            ×
-                        </button>
+                        ${
+                            isTimeGoal
+                                ? `
+                                    <div class="goal-progress">
+                                        <div
+                                            class="goal-progress-fill"
+                                            style="width: ${progressPercent}%"
+                                        ></div>
+                                    </div>
+                                `
+                                : `
+                                    <div
+                                        style="
+                                            margin-top: 5px;
+                                            color: var(--muted-dark);
+                                            font-size: 10px;
+                                        "
+                                    >
+                                        ${escapeHTML(
+                                            typeText
+                                        )}
+                                    </div>
+                                `
+                        }
 
                     </div>
-                `;
-            }).join("");
-        }
 
+                    <div class="goal-meta">
+                        ${escapeHTML(
+                            metaText
+                        )}
+                    </div>
 
-        function setupGoals() {
-            const addButton =
-                document.getElementById("addGoalButton");
+                    <button
+                        class="goal-delete"
+                        type="button"
+                        data-action="delete"
+                        title="Delete goal"
+                    >
+                        ×
+                    </button>
 
-            const form =
-                document.getElementById("goalForm");
+                </div>
+            `;
+        }).join("");
+}
 
-            const nameInput =
-                document.getElementById("goalName");
+function setupGoals() {
+    const addButton =
+        document.getElementById(
+            "addGoalButton"
+        );
 
-            const minutesInput =
-                document.getElementById("goalMinutes");
+    const form =
+        document.getElementById(
+            "goalForm"
+        );
 
-            const saveButton =
-                document.getElementById("saveGoalButton");
+    const goalsList =
+        document.getElementById(
+            "goalsList"
+        );
 
-            const cancelButton =
-                document.getElementById("cancelGoalButton");
+    if (
+        !addButton ||
+        !form ||
+        !goalsList
+    ) {
+        console.warn(
+            "Goals UI elements were not found."
+        );
 
-            const goalsList =
-                document.getElementById("goalsList");
+        return;
+    }
 
+    /*
+     * Build the form ourselves so the existing HTML
+     * does not need another manual edit.
+     */
+    form.innerHTML = `
+        <div
+            style="
+                grid-column: 1 / -1;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 2px;
+            "
+        >
+            <strong
+                style="
+                    font-size: 12px;
+                    font-weight: 650;
+                "
+            >
+                Add something for today
+            </strong>
 
-            if (!addButton || !form || !nameInput ||
-                !minutesInput || !saveButton ||
-                !cancelButton || !goalsList) {
-                console.warn(
-                    "Goals UI elements were not found."
+            <button
+                id="closeGoalButton"
+                type="button"
+                style="
+                    padding: 3px 7px;
+                    border: 0;
+                    background: transparent;
+                    color: var(--muted-dark);
+                    font-size: 16px;
+                    cursor: pointer;
+                "
+                title="Close"
+            >
+                ×
+            </button>
+        </div>
+
+        <select
+            id="goalType"
+            style="
+                width: 100%;
+                height: 34px;
+                padding: 0 10px;
+                background: #111419;
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 7px;
+                outline: none;
+                font-size: 12px;
+            "
+        >
+            <option value="task">
+                ✓ Manual task
+            </option>
+
+            <option value="time">
+                ⏱ Time goal
+            </option>
+        </select>
+
+        <input
+            id="goalName"
+            type="text"
+            placeholder="e.g. Practice guitar"
+            maxlength="100"
+        />
+
+        <select
+            id="goalCategory"
+            style="
+                width: 100%;
+                height: 34px;
+                padding: 0 10px;
+                background: #111419;
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 7px;
+                outline: none;
+                font-size: 12px;
+            "
+        ></select>
+
+        <input
+            id="goalMinutes"
+            type="number"
+            min="1"
+            max="1440"
+            placeholder="Minutes"
+        />
+
+        <button
+            id="saveGoalButton"
+            type="button"
+        >
+            Add
+        </button>
+
+        <button
+            id="cancelGoalButton"
+            type="button"
+        >
+            Cancel
+        </button>
+    `;
+
+    const typeSelect =
+        document.getElementById(
+            "goalType"
+        );
+
+    const nameInput =
+        document.getElementById(
+            "goalName"
+        );
+
+    const categorySelect =
+        document.getElementById(
+            "goalCategory"
+        );
+
+    const minutesInput =
+        document.getElementById(
+            "goalMinutes"
+        );
+
+    const saveButton =
+        document.getElementById(
+            "saveGoalButton"
+        );
+
+    const cancelButton =
+        document.getElementById(
+            "cancelGoalButton"
+        );
+
+    const closeButton =
+        document.getElementById(
+            "closeGoalButton"
+        );
+
+    /*
+     * Fill category selector.
+     */
+    Object.entries(
+        CATEGORIES
+    ).forEach(
+        ([key, info]) => {
+            const option =
+                document.createElement(
+                    "option"
                 );
 
+            option.value = key;
+
+            option.textContent =
+                `${info.icon} ${info.name}`;
+
+            categorySelect.appendChild(
+                option
+            );
+        }
+    );
+
+    /*
+     * Make sure the form is CLOSED on startup.
+     */
+    form.style.display = "none";
+
+    function updateFormMode() {
+        const isTimeGoal =
+            typeSelect.value === "time";
+
+        categorySelect.style.display =
+            isTimeGoal
+                ? ""
+                : "none";
+
+        minutesInput.style.display =
+            isTimeGoal
+                ? ""
+                : "none";
+
+        if (isTimeGoal) {
+            nameInput.placeholder =
+                "e.g. Practice guitar";
+            minutesInput.placeholder =
+                "Minutes";
+        } else {
+            nameInput.placeholder =
+                "e.g. Draw a character";
+        }
+    }
+
+    function openForm() {
+        form.style.display = "grid";
+
+        typeSelect.value = "task";
+
+        nameInput.value = "";
+        minutesInput.value = "";
+
+        updateFormMode();
+
+        nameInput.focus();
+    }
+
+    function closeForm() {
+        form.style.display = "none";
+
+        nameInput.value = "";
+        minutesInput.value = "";
+
+        typeSelect.value = "task";
+
+        updateFormMode();
+    }
+
+    addButton.addEventListener(
+        "click",
+        openForm
+    );
+
+    cancelButton.addEventListener(
+        "click",
+        closeForm
+    );
+
+    closeButton.addEventListener(
+        "click",
+        closeForm
+    );
+
+    typeSelect.addEventListener(
+        "change",
+        updateFormMode
+    );
+
+    saveButton.addEventListener(
+        "click",
+        () => {
+            const name =
+                nameInput.value.trim();
+
+            if (!name) {
+                nameInput.focus();
                 return;
             }
 
+            const type =
+                typeSelect.value;
 
-            addButton.addEventListener("click", () => {
-                form.style.display = "grid";
+            let minutes = 0;
+            let category = null;
 
-                nameInput.focus();
-            });
+            if (type === "time") {
+                minutes =
+                    Number(
+                        minutesInput.value
+                    );
 
-
-            cancelButton.addEventListener("click", () => {
-                form.style.display = "none";
-
-                nameInput.value = "";
-                minutesInput.value = "";
-            });
-
-
-            saveButton.addEventListener("click", () => {
-                const name =
-                    nameInput.value.trim();
-
-                const minutes =
-                    Number(minutesInput.value) || 0;
-
-
-                if (!name) {
-                    nameInput.focus();
-                    return;
-                }
-
+                category =
+                    categorySelect.value;
 
                 if (
-                    minutes < 0 ||
+                    !Number.isFinite(
+                        minutes
+                    ) ||
+                    minutes < 1 ||
                     minutes > 1440
                 ) {
                     minutesInput.focus();
                     return;
                 }
+            }
 
+            const goals =
+                getGoalsForCurrentDay();
 
-                const goals =
-                    getGoalsForCurrentDay();
+            goals.push({
+                id:
+                    `${Date.now()}-${Math.random()
+                        .toString(36)
+                        .slice(2, 8)}`,
 
+                name,
 
-                goals.push({
-                    id:
-                        `${Date.now()}-${Math.random()
-                            .toString(36)
-                            .slice(2, 8)}`,
+                type,
 
-                    name,
+                category,
 
-                    minutes,
+                minutes,
 
-                    completed: false
-                });
+                progressSeconds: 0,
 
-
-                saveGoalsForCurrentDay(goals);
-
-
-                nameInput.value = "";
-                minutesInput.value = "";
-
-                form.style.display = "none";
-
-                renderGoals();
+                completed: false
             });
 
-
-            nameInput.addEventListener(
-                "keydown",
-                event => {
-                    if (event.key === "Enter") {
-                        saveButton.click();
-                    }
-                }
+            saveGoalsForCurrentDay(
+                goals
             );
 
+            closeForm();
 
-            minutesInput.addEventListener(
-                "keydown",
-                event => {
-                    if (event.key === "Enter") {
-                        saveButton.click();
-                    }
-                }
+            renderGoals(
+                currentRange === "day"
+                    ? currentApps
+                    : null
             );
+        }
+    );
 
-
-            goalsList.addEventListener(
-                "click",
-                event => {
-                    const button =
-                        event.target.closest(
-                            "[data-action]"
-                        );
-
-                    if (!button) {
-                        return;
-                    }
-
-
-                    const row =
-                        button.closest(".goal-row");
-
-                    if (!row) {
-                        return;
-                    }
-
-
-                    const goalId =
-                        row.dataset.goalId;
-
-                    const action =
-                        button.dataset.action;
-
-
-                    let goals =
-                        getGoalsForCurrentDay();
-
-
-                    if (action === "toggle") {
-                        goals = goals.map(goal => {
-                            if (
-                                String(goal.id) ===
-                                String(goalId)
-                            ) {
-                                return {
-                                    ...goal,
-                                    completed:
-                                        !goal.completed
-                                };
-                            }
-
-                            return goal;
-                        });
-
-                        saveGoalsForCurrentDay(goals);
-
-                        renderGoals();
-
-                        return;
-                    }
-
-
-                    if (action === "delete") {
-                        goals = goals.filter(
-                            goal =>
-                                String(goal.id) !==
-                                String(goalId)
-                        );
-
-                        saveGoalsForCurrentDay(goals);
-
-                        renderGoals();
-                    }
-                }
-            );
-
-
-            renderGoals();
+    function handleEnter(event) {
+        if (
+            event.key === "Enter"
+        ) {
+            event.preventDefault();
+            saveButton.click();
         }
 
+        if (
+            event.key === "Escape"
+        ) {
+            closeForm();
+        }
+    }
 
-        setupGoals();
+    nameInput.addEventListener(
+        "keydown",
+        handleEnter
+    );
+
+    minutesInput.addEventListener(
+        "keydown",
+        handleEnter
+    );
+
+    goalsList.addEventListener(
+        "click",
+        event => {
+            const button =
+                event.target.closest(
+                    "[data-action]"
+                );
+
+            if (!button) {
+                return;
+            }
+
+            const row =
+                button.closest(
+                    ".goal-row"
+                );
+
+            if (!row) {
+                return;
+            }
+
+            const goalId =
+                row.dataset.goalId;
+
+            const action =
+                button.dataset.action;
+
+            let goals =
+                getGoalsForCurrentDay();
+
+            if (
+                action === "toggle"
+            ) {
+                goals =
+                    goals.map(goal => {
+                        if (
+                            String(
+                                goal.id
+                            ) ===
+                            String(
+                                goalId
+                            )
+                        ) {
+                            /*
+                             * Manual tasks can be toggled.
+                             * Time goals normally auto-complete,
+                             * but allowing a toggle is useful if
+                             * the user wants to override it.
+                             */
+                            return {
+                                ...goal,
+                                completed:
+                                    !goal.completed
+                            };
+                        }
+
+                        return goal;
+                    });
+
+                saveGoalsForCurrentDay(
+                    goals
+                );
+
+                renderGoals(
+                    currentRange === "day"
+                        ? currentApps
+                        : null
+                );
+
+                return;
+            }
+
+            if (
+                action === "delete"
+            ) {
+                goals =
+                    goals.filter(
+                        goal =>
+                            String(
+                                goal.id
+                            ) !==
+                            String(
+                                goalId
+                            )
+                    );
+
+                saveGoalsForCurrentDay(
+                    goals
+                );
+
+                renderGoals(
+                    currentRange === "day"
+                        ? currentApps
+                        : null
+                );
+            }
+        }
+    );
+
+    updateFormMode();
+
+    renderGoals();
+}
+
+/*
+ * Update goals whenever the dashboard receives
+ * fresh application data.
+ */
+const originalRenderApps =
+    renderApps;
+
+renderApps = function(apps) {
+    originalRenderApps(apps);
+
+    renderGoals(
+        currentRange === "day"
+            ? apps
+            : null
+    );
+};
+
+setupGoals();
 
 </script>
 
