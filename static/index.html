@@ -386,6 +386,147 @@
 
 
         /* =====================================================
+   WEEKLY GOALS HISTORY
+   ===================================================== */
+
+.weekly-goals-card {
+    margin-bottom: 14px;
+}
+
+.weekly-goals-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.weekly-goals-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -0.2px;
+}
+
+.weekly-goals-description {
+    margin: 5px 0 0;
+    color: var(--muted-dark);
+    font-size: 11px;
+}
+
+.weekly-goals-range {
+    color: var(--muted-dark);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.weekly-goals-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.weekly-goal-stat {
+    padding: 12px 14px;
+    background: #0e1014;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.weekly-goal-stat strong {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.weekly-goal-stat span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted-dark);
+    font-size: 10px;
+}
+
+.weekly-goals-days {
+    display: flex;
+    flex-direction: column;
+}
+
+.weekly-goal-day {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr) 80px;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid #1a1d22;
+}
+
+.weekly-goal-day:last-child {
+    border-bottom: 0;
+}
+
+.weekly-goal-day-name {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.weekly-goal-day-date {
+    margin-top: 3px;
+    color: var(--muted-dark);
+    font-size: 10px;
+}
+
+.weekly-goal-bar {
+    height: 8px;
+    overflow: hidden;
+    background: #1b1f25;
+    border-radius: 999px;
+}
+
+.weekly-goal-bar-fill {
+    height: 100%;
+    background: #d9dde3;
+    border-radius: inherit;
+    transition: width 0.25s ease;
+}
+
+.weekly-goal-day-result {
+    color: var(--muted-dark);
+    font-size: 11px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.weekly-goal-day.empty {
+    opacity: 0.45;
+}
+
+.weekly-goal-day.today {
+    background: rgba(255, 255, 255, 0.015);
+}
+
+@media (max-width: 700px) {
+    .weekly-goals-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .weekly-goals-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .weekly-goal-day {
+        grid-template-columns: 58px minmax(0, 1fr);
+    }
+
+    .weekly-goal-day-result {
+        grid-column: 2;
+        text-align: left;
+    }
+}
+
+        /* =====================================================
            HEADER
            ===================================================== */
 
@@ -1870,6 +2011,49 @@
                 <div class="loading">Loading...</div>
             </div>
         </section>
+
+<section class="card weekly-goals-card" id="weeklyGoalsSection">
+    <div class="weekly-goals-header">
+        <div>
+            <h2 class="weekly-goals-title">📅 Weekly Goals</h2>
+            <p class="weekly-goals-description">
+                See how consistently you completed your goals this week.
+            </p>
+        </div>
+
+        <div class="weekly-goals-range" id="weeklyGoalsRange">
+            This week
+        </div>
+    </div>
+
+    <div class="weekly-goals-summary">
+        <div class="weekly-goal-stat">
+            <strong id="weeklyGoalsCompleted">0</strong>
+            <span>Completed</span>
+        </div>
+
+        <div class="weekly-goal-stat">
+            <strong id="weeklyGoalsTotal">0</strong>
+            <span>Total goals</span>
+        </div>
+
+        <div class="weekly-goal-stat">
+            <strong id="weeklyGoalsPercent">0%</strong>
+            <span>Completion</span>
+        </div>
+
+        <div class="weekly-goal-stat">
+            <strong id="weeklyGoalsBestDay">—</strong>
+            <span>Best day</span>
+        </div>
+    </div>
+
+    <div class="weekly-goals-days" id="weeklyGoalsDays">
+        <div class="goals-empty">
+            No goal history yet.
+        </div>
+    </div>
+</section>
 
         <section class="card goals-card" id="goalsSection">
     <div class="goals-header">
@@ -5778,6 +5962,341 @@ renderApps = function(apps) {
 };
 
 setupGoals();
+
+/* =====================================================
+   WEEKLY GOALS HISTORY
+   ===================================================== */
+
+function getLocalDateKey(date) {
+    const year = date.getFullYear();
+
+    const month = String(
+        date.getMonth() + 1
+    ).padStart(2, "0");
+
+    const day = String(
+        date.getDate()
+    ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function getStartOfWeek(date) {
+    const result = new Date(date);
+
+    result.setHours(0, 0, 0, 0);
+
+    const day = result.getDay();
+
+    /*
+     * Monday = first day of week.
+     */
+    const difference =
+        day === 0
+            ? -6
+            : 1 - day;
+
+    result.setDate(
+        result.getDate() + difference
+    );
+
+    return result;
+}
+
+function getWeeklyGoalsData() {
+    const storage =
+        getGoalsStorage();
+
+    const selected =
+        selectedDate
+            ? new Date(selectedDate)
+            : new Date();
+
+    const weekStart =
+        getStartOfWeek(selected);
+
+    const days = [];
+
+    for (
+        let index = 0;
+        index < 7;
+        index++
+    ) {
+        const date =
+            new Date(weekStart);
+
+        date.setDate(
+            weekStart.getDate() +
+            index
+        );
+
+        const dateKey =
+            getLocalDateKey(date);
+
+        const goals =
+            Array.isArray(
+                storage[dateKey]
+            )
+                ? storage[dateKey]
+                : [];
+
+        const completed =
+            goals.filter(
+                goal =>
+                    goal.completed
+            ).length;
+
+        const total =
+            goals.length;
+
+        days.push({
+            date,
+            dateKey,
+            goals,
+            completed,
+            total
+        });
+    }
+
+    return days;
+}
+
+function renderWeeklyGoals() {
+    const daysContainer =
+        document.getElementById(
+            "weeklyGoalsDays"
+        );
+
+    const completedElement =
+        document.getElementById(
+            "weeklyGoalsCompleted"
+        );
+
+    const totalElement =
+        document.getElementById(
+            "weeklyGoalsTotal"
+        );
+
+    const percentElement =
+        document.getElementById(
+            "weeklyGoalsPercent"
+        );
+
+    const bestDayElement =
+        document.getElementById(
+            "weeklyGoalsBestDay"
+        );
+
+    const rangeElement =
+        document.getElementById(
+            "weeklyGoalsRange"
+        );
+
+    if (
+        !daysContainer ||
+        !completedElement ||
+        !totalElement ||
+        !percentElement ||
+        !bestDayElement
+    ) {
+        return;
+    }
+
+    const days =
+        getWeeklyGoalsData();
+
+    const total =
+        days.reduce(
+            (sum, day) =>
+                sum + day.total,
+            0
+        );
+
+    const completed =
+        days.reduce(
+            (sum, day) =>
+                sum + day.completed,
+            0
+        );
+
+    const percentage =
+        total > 0
+            ? Math.round(
+                (completed /
+                    total) *
+                    100
+            )
+            : 0;
+
+    const daysWithGoals =
+        days.filter(
+            day =>
+                day.total > 0
+        );
+
+    const bestDay =
+        daysWithGoals.length
+            ? daysWithGoals.reduce(
+                (best, day) => {
+                    const bestPercent =
+                        best.total > 0
+                            ? best.completed /
+                              best.total
+                            : 0;
+
+                    const dayPercent =
+                        day.total > 0
+                            ? day.completed /
+                              day.total
+                            : 0;
+
+                    return dayPercent >
+                        bestPercent
+                        ? day
+                        : best;
+                }
+            )
+            : null;
+
+    completedElement.textContent =
+        completed;
+
+    totalElement.textContent =
+        total;
+
+    percentElement.textContent =
+        `${percentage}%`;
+
+    if (bestDay) {
+        bestDayElement.textContent =
+            bestDay.date.toLocaleDateString(
+                undefined,
+                {
+                    weekday: "short"
+                }
+            );
+    } else {
+        bestDayElement.textContent =
+            "—";
+    }
+
+    if (rangeElement) {
+        const first =
+            days[0].date;
+
+        const last =
+            days[6].date;
+
+        const firstText =
+            first.toLocaleDateString(
+                undefined,
+                {
+                    month: "short",
+                    day: "numeric"
+                }
+            );
+
+        const lastText =
+            last.toLocaleDateString(
+                undefined,
+                {
+                    month: "short",
+                    day: "numeric"
+                }
+            );
+
+        rangeElement.textContent =
+            `${firstText} – ${lastText}`;
+    }
+
+    daysContainer.innerHTML =
+        days.map(day => {
+            const dayPercent =
+                day.total > 0
+                    ? Math.round(
+                        (
+                            day.completed /
+                            day.total
+                        ) * 100
+                    )
+                    : 0;
+
+            const isToday =
+                getLocalDateKey(
+                    new Date()
+                ) === day.dateKey;
+
+            const dayName =
+                day.date.toLocaleDateString(
+                    undefined,
+                    {
+                        weekday: "short"
+                    }
+                );
+
+            const dateText =
+                day.date.toLocaleDateString(
+                    undefined,
+                    {
+                        month: "short",
+                        day: "numeric"
+                    }
+                );
+
+            return `
+                <div
+                    class="weekly-goal-day
+                        ${day.total === 0 ? "empty" : ""}
+                        ${isToday ? "today" : ""}"
+                >
+
+                    <div>
+                        <div class="weekly-goal-day-name">
+                            ${dayName}
+                        </div>
+
+                        <div class="weekly-goal-day-date">
+                            ${dateText}
+                        </div>
+                    </div>
+
+                    <div class="weekly-goal-bar">
+                        <div
+                            class="weekly-goal-bar-fill"
+                            style="width: ${dayPercent}%"
+                        ></div>
+                    </div>
+
+                    <div class="weekly-goal-day-result">
+                        ${
+                            day.total > 0
+                                ? `${day.completed}/${day.total}`
+                                : "No goals"
+                        }
+                    </div>
+
+                </div>
+            `;
+        }).join("");
+}
+
+/*
+ * Render once immediately.
+ */
+renderWeeklyGoals();
+
+/*
+ * Keep weekly history synchronized whenever
+ * the existing dashboard refreshes.
+ */
+const originalRenderGoals =
+    renderGoals;
+
+renderGoals = function(apps = null) {
+    originalRenderGoals(apps);
+
+    renderWeeklyGoals();
+};
 
 </script>
 
